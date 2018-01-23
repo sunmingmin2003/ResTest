@@ -1,4 +1,0 @@
-[PANEL_9_SetSaveDir]
-Class="Function"
-Prototype="int PANEL_9_SetSaveDir(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
-
