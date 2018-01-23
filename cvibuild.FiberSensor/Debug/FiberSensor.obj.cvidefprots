@@ -1,0 +1,140 @@
+[ClientTCPCB]
+Class="Function"
+Prototype="int ClientTCPCB(unsigned int handle, int event, int error, void *callbackData);"
+
+[PANEL_Timer_CMD_Process]
+Class="Function"
+Prototype="int PANEL_Timer_CMD_Process(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[main]
+Class="Function"
+Prototype="int main(int argc, char **argv);"
+
+[PANEL_3_ButtonQuit]
+Class="Function"
+Prototype="int PANEL_3_ButtonQuit(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_4_ButtomQuit]
+Class="Function"
+Prototype="int PANEL_4_ButtomQuit(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_Quit]
+Class="Function"
+Prototype="int PANEL_Quit(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_9_ButtomQuit]
+Class="Function"
+Prototype="int PANEL_9_ButtomQuit(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_2_Connect]
+Class="Function"
+Prototype="int PANEL_2_Connect(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_NetStatus]
+Class="Function"
+Prototype="int PANEL_NetStatus(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_AutoConnect]
+Class="Function"
+Prototype="int PANEL_AutoConnect(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[OnTABLE_MSG]
+Class="Function"
+Prototype="int OnTABLE_MSG(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[SendNetCMD]
+Class="Function"
+Prototype="void SendNetCMD(int iCMDCode, char *str);"
+
+[SendComCMD]
+Class="Function"
+Prototype="int SendComCMD(int iPortNo, int iLen, char *str);"
+
+[DisableCtrlCMD]
+Class="Function"
+Prototype="void DisableCtrlCMD();"
+
+[EnableCtrlCMD]
+Class="Function"
+Prototype="void EnableCtrlCMD();"
+
+[OnBTNShortKey]
+Class="Function"
+Prototype="int OnBTNShortKey(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_12_Quit]
+Class="Function"
+Prototype="int PANEL_12_Quit(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[TCPReadReset]
+Class="Function"
+Prototype="void TCPReadReset();"
+
+[ProcessTimeOutErr]
+Class="Function"
+Prototype="void ProcessTimeOutErr(int iCMD);"
+
+[InsertTableMsg]
+Class="Function"
+Prototype="void InsertTableMsg(char *str1, char *str2);"
+
+[InsertGraphLabel]
+Class="Function"
+Prototype="void InsertGraphLabel(int channel);"
+
+[PANEL_EnableRXD]
+Class="Function"
+Prototype="int PANEL_EnableRXD(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_DAQ_START]
+Class="Function"
+Prototype="int PANEL_DAQ_START(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_DAQ_STOP]
+Class="Function"
+Prototype="int PANEL_DAQ_STOP(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_Print]
+Class="Function"
+Prototype="int PANEL_Print(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_SaveScreen]
+Class="Function"
+Prototype="int PANEL_SaveScreen(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_11_Print]
+Class="Function"
+Prototype="int PANEL_11_Print(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[InitialDefaultCtrl]
+Class="Function"
+Prototype="void InitialDefaultCtrl();"
+
+[SetAlarmDisplay]
+Class="Function"
+Prototype="void SetAlarmDisplay();"
+
+[PANEL_DEL_ALARM]
+Class="Function"
+Prototype="int PANEL_DEL_ALARM(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_Single_DAQ]
+Class="Function"
+Prototype="int PANEL_Single_DAQ(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_HV_Test]
+Class="Function"
+Prototype="int PANEL_HV_Test(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PABEL_6_SetCom]
+Class="Function"
+Prototype="int PABEL_6_SetCom(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_6_Exit]
+Class="Function"
+Prototype="int PANEL_6_Exit(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_11_Save_Result]
+Class="Function"
+Prototype="int PANEL_11_Save_Result(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+

@@ -1,0 +1,48 @@
+[PANEL_7_Exit]
+Class="Function"
+Prototype="int PANEL_7_Exit(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_HI_Test]
+Class="Function"
+Prototype="int PANEL_7_HI_Test(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_PreTest]
+Class="Function"
+Prototype="int PANEL_7_PreTest(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Start_Device]
+Class="Function"
+Prototype="int PANEL_7_Start_Device(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Progrocess]
+Class="Function"
+Prototype="int PANEL_7_Progrocess(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Close_Device]
+Class="Function"
+Prototype="int PANEL_7_Close_Device(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Set_HV]
+Class="Function"
+Prototype="int PANEL_7_Set_HV(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Auto_Start]
+Class="Function"
+Prototype="int PANEL_7_Auto_Start(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Auto_Test]
+Class="Function"
+Prototype="int PANEL_7_Auto_Test(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Stop_Test]
+Class="Function"
+Prototype="int PANEL_7_Stop_Test(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_SetResult]
+Class="Function"
+Prototype="int PANEL_7_SetResult(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[PANEL_7_Auto_GND_Start]
+Class="Function"
+Prototype="int PANEL_7_Auto_GND_Start(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+

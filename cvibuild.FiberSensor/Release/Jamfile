@@ -1,0 +1,55 @@
+HDRS = 	"d:\\Test\\ResTest1126"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\activex\\word"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\activex\\excel"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\custctrl"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\custctrl\\custsupp"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\cvirtsup"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\datasock"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\daqUtil"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\printing"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\toolbox"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\reportgen"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\toolslib\\localui"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\instr"
+	"D:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\toolslib\\custctrl"
+	"D:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\toolslib\\custctrl\\custsupp"
+	"D:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\instr"
+	"C:\\ProgramData\\National Instruments\\CVI2013\\instr"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\include"
+	"D:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\include"
+	"C:\\ProgramData\\National Instruments\\CVI2013\\include"
+	"C:\\ProgramData\\National Instruments\\CVI\\include"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\include\\ansi"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\include\\clang\\2.9"
+	"C:\\Program Files (x86)\\IVI Foundation\\IVI\\Include"
+	"C:\\Program Files (x86)\\IVI Foundation\\VISA\\winnt\\include"
+	"d:\\program files (x86)\\national instruments\\cvi2013\\sdk\\include"
+	"d:\\Program Files (x86)\\National Instruments\\CVI2013\\bin"
+	"c:\\ProgramData\\National Instruments\\CVI2013\\bin"
+	"d:\\Program Files (x86)\\National Instruments\\Shared\\CVI\\Bin"
+	;
+LOCATE on "Authority.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "ChanGraphView.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "ChanGraphView.h" = "d:\\Test\\ResTest1126" ;
+LOCATE on "ChannelSel.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "Command.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "Command.h" = "d:\\Test\\ResTest1126" ;
+LOCATE on "Config.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "Config.h" = "d:\\Test\\ResTest1126" ;
+LOCATE on "FiberSensor.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "FiberSensor.h" = "d:\\Test\\ResTest1126" ;
+LOCATE on "HI_Test.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "HV_Test.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "InsulationTest.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "MenuItem.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "RecordSet.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "SaveData.c" = "d:\\Test\\ResTest1126" ;
+LOCATE on "SaveData.h" = "d:\\Test\\ResTest1126" ;
+LOCATE on "SetIP.h" = "d:\\Test\\ResTest1126" ;
+LOCATE on "variable.h" = "d:\\Test\\ResTest1126" ;
+Object "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i" : "d:\\Test\\ResTest1126\\ChannelSel.c" ;
+FILENUM on "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i" = 1 ;
+DEFPROTS on "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i" = "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i.cvidefprots" ;
+OUTFILE on "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i" = "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i.out" ;
+Always "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i" ;
+Depends all : "d:\\Test\\ResTest1126\\cvibuild.FiberSensor\\Release\\ChannelSel.i" ;

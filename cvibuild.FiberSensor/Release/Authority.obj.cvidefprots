@@ -1,0 +1,20 @@
+[OnSuperAdminLogin]
+Class="Function"
+Prototype="int OnSuperAdminLogin(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[OnCancel]
+Class="Function"
+Prototype="int OnCancel(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[LoadPassword]
+Class="Function"
+Prototype="void LoadPassword();"
+
+[SavePassword]
+Class="Function"
+Prototype="void SavePassword();"
+
+[OnModifyPassword]
+Class="Function"
+Prototype="int OnModifyPassword(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+

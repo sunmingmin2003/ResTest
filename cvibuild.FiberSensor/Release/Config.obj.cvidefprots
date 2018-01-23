@@ -1,0 +1,12 @@
+[LoadConfig]
+Class="Function"
+Prototype="void LoadConfig();"
+
+[SaveConfig]
+Class="Function"
+Prototype="void SaveConfig();"
+
+[AnalyseValue]
+Class="Function"
+Prototype="void AnalyseValue(char *Text);"
+

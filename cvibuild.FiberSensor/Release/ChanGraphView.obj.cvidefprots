@@ -1,0 +1,8 @@
+[PANEL_BTNScale]
+Class="Function"
+Prototype="int PANEL_BTNScale(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
+[OnGraph]
+Class="Function"
+Prototype="int OnGraph(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);"
+
