@@ -26,7 +26,7 @@ static int giTCPDisable = 0;  //接收到命令后，要关闭TCP的接收缓冲部分
 static int giMsgRowCurrent =0;
 static int giTCPReadCNT=0;
 static int gRevStatus = 0;
-static int giNumRead  = 0;
+static int giNumRead  = 0;	  //已经收到的数据数量
 static int giCurrentGraph = 1;
 static int giEnableDataRev = 1;
 
@@ -53,10 +53,10 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 	{
 		case TCP_DATAREADY:
 //重置定时检测网络定时器
-			ResetTimer(panelHandle, PANEL_TIMER_AutoConnect);
+			ResetTimer(panelHandle, PANEL_TIMER_AutoConnect);//自动重连timer
 			gNetConnectStatus = 1;
 
-			if(giTCPDisable)
+			if(giTCPDisable)  //=1禁止接收
 				return 0;
 
 			if(giTCPReadCNT==0)
@@ -68,11 +68,11 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 				iStatus = (gBufRev[1]==0x7B)&&(gBufRev[2]==0x07)&&(gBufRev[3]==0xAF)&&(gBufRev[4]==0xEC)
 						  &&(gBufRev[5]==0x66)&&(gBufRev[6]==0x48)&&(gBufRev[7]==0xC5)&&(gBufRev[8]==0x73);
 				if( (i!=13) || (iStatus ==0) ) //恢复初始状态
-					TCPReadReset();
+					TCPReadReset();//清空缓冲区
 				return 0;
 			}
 
-			iTmp = gDataBuf[9]+(gDataBuf[10]<<8) + (gDataBuf[11]<<16) + (gDataBuf[12]<<24);
+			iTmp = gDataBuf[9]+(gDataBuf[10]<<8) + (gDataBuf[11]<<16) + (gDataBuf[12]<<24);  //计算要接收的数据
 			if( ((iTmp - giNumRead)>0) && ( (iTmp - giNumRead) <2*gDataMaxLen))              //防止因为下位机数据出错而造成的数组溢出
 			{
 				i = ClientTCPRead (pH_NetHandle, gBufRev, iTmp - giNumRead, _TCP_TIME_OUT) ;   //
@@ -83,7 +83,7 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 //如果超过100次数据仍然没有读完毕
 			if(giTCPReadCNT==100)
 			{
-				TCPReadReset();
+				TCPReadReset(); //清空缓冲区   
 				return 0;
 			}
 //如果数据读取完毕并且数据正确
@@ -116,7 +116,7 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 						}
 					}
 					//设置LED的显示状态
-					GetCtrlVal(panelHandle, PANEL_LED, &i);
+					GetCtrlVal(panelHandle, PANEL_LED, &i);//运行指示
 					if(i==0)	//关闭的时候
 					{
 						GetCtrlAttribute (panelHandle, PANEL_LED, ATTR_OFF_COLOR, &iTmp);
@@ -155,16 +155,16 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 
 					//插入时间
 					sprintf(strTmp, "%s %s", DateStr(), TimeStr());
-					SetCtrlVal(panelHandle, PANEL_STRING, strTmp);
+					SetCtrlVal(panelHandle, PANEL_STRING, strTmp);//设置测试时间
 					
-					SetAlarmDisplay();
+					SetAlarmDisplay(); //结果显示处理
 					
 					break;
 
 //下面的是上位机需要拿定时器来处理的数据
 				default:
 					gNetCMDRev   = _DATA_CMD_READY; //只要接收到了命令，都表示当前是ready状态，接下来需要“命令定时器”来处理
-					giTCPDisable = 1;				//经过0.2s后才开始继续接收数据，以防止：接收到命令数据以后，定时器还没来及得处理命令，下面的数据又上来了，把数据给冲乱了
+					giTCPDisable = 1;//禁止接收				//经过0.2s后才开始继续接收数据，以防止：接收到命令数据以后，定时器还没来及得处理命令，下面的数据又上来了，把数据给冲乱了
 					SetCtrlAttribute (panelHandle, PANEL_TIMER_EnableRXD, ATTR_ENABLED, 1);
 					break;
 			}
@@ -176,7 +176,7 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 	return 0;
 }
 
-//网络状态Timer 0.2S internel
+//网络状态Timer 0.2S internel，发送完网络命令后，启动该定时器，处理接收到得数据
 int CVICALLBACK PANEL_Timer_CMD_Process (int panel, int control, int event,
 		void *callbackData, int eventData1, int eventData2)
 {
@@ -195,7 +195,7 @@ int CVICALLBACK PANEL_Timer_CMD_Process (int panel, int control, int event,
 				ProcessTimeOutErr(gNetCMDCode);
 
 //收到了数据 ,处理命令码
-			else if(gNetCMDRev == _DATA_CMD_READY)
+			else if(gNetCMDRev == _DATA_CMD_READY)  //gNetCMDRev 在 ClientTCPCB()里面，判断置位
 				switch (gNetCMDCode)
 				{
 					case  _NET_CONNECT_TEST:
@@ -264,6 +264,9 @@ int main (int argc, char *argv[])
 	DisableBreakOnLibraryErrors();
 	//自动连接IP
 	i = ConnectToTCPServerEx (&pH_NetHandle, gNetPort, gNetIP, ClientTCPCB, NULL, _TCP_TIME_OUT, TCP_ANY_LOCAL_PORT);
+	if(i < 0)
+		MessagePopup("提示","不能打开网络连接!");
+	
 	gNetCMDRev = _DATA_CMD_IDLE;
 
 	if(i <0)
@@ -363,7 +366,11 @@ int main (int argc, char *argv[])
 	 i= OpenComConfig (gComInsulation, "", 9600, 0, 8, 1, 4096, 4096);
 	 SetComTime (gComInsulation, 1.0);   	 
 	 if(i<0)
-		 InsertTableMsg("错误提示","绝缘发生器串口无法打开，请填写正确串口号!");	 	 
+		 InsertTableMsg("错误提示","绝缘发生器串口无法打开，请填写正确串口号!");
+	 
+	  //发送停止命令，防止一直有数据传上来
+	 sprintf(gBufTxd, "%s", "[E]>MA0#"); 
+	 SendNetCMD(_NET_DAQ_STOP,gBufTxd);
 	
 	//初始化LED灯
 	SetCtrlAttribute (panelHandle, PANEL_LED, ATTR_OFF_COLOR, VAL_GREEN);     	
@@ -439,7 +446,7 @@ int CVICALLBACK PANEL_9_ButtomQuit (int panel, int control, int event,
 	return 0;
 }
 
-//网络连接，连接
+//网络连接面板，连接
 int CVICALLBACK PANEL_2_Connect (int panel, int control, int event,
 								 void *callbackData, int eventData1, int eventData2)
 {
@@ -472,7 +479,7 @@ int CVICALLBACK PANEL_2_Connect (int panel, int control, int event,
 	return 0;
 }
 
-//本定时器负责随时检测网络状态,根据gNetConnectStatus状态，更新控件状态
+//本定时器负责随时检测网络状态,根据gNetConnectStatus状态，更新控件状态 ，tick is 2S
 int CVICALLBACK PANEL_NetStatus (int panel, int control, int event,
 								 void *callbackData, int eventData1, int eventData2)
 {
@@ -511,7 +518,7 @@ int CVICALLBACK PANEL_NetStatus (int panel, int control, int event,
 }
 
 
-//本定时器负责自动连接网络，每隔一分钟检测网络状态，如果网络断开，则自动重连
+//(停用)本定时器负责自动连接网络，每隔一分钟检测网络状态，如果网络断开，则自动重连
 int CVICALLBACK PANEL_AutoConnect (int panel, int control, int event,
 								   void *callbackData, int eventData1, int eventData2)
 {
@@ -533,23 +540,25 @@ int CVICALLBACK OnTABLE_MSG (int panel, int control, int event,
 	{
 		case EVENT_LEFT_DOUBLE_CLICK:
 			DeleteTableRows (panelHandle, PANEL_TABLE_MSG, 1, -1);
-			InsertTableRows (panelHandle, PANEL_TABLE_MSG, 1, 20, VAL_CELL_STRING);
+			InsertTableRows (panelHandle, PANEL_TABLE_MSG, 1, 20, VAL_CELL_STRING); //the cell holds text data
 			giMsgRowCurrent = 0;
 			break;
 	}
 	return 0;
 }
 
-//向网络发送命令
+//向网络发送命令，由0.2S后的 定时器PANEL_Timer_CMD_Process，处理接收到得数据
 void SendNetCMD (int iCMDCode, char*str)
 {
 	int i;
+	int count;
 	DisableCtrlCMD();
 	gNetCMDCode = iCMDCode;
 
 	gNetCMDRev = _DATA_CMD_IDLE;
 	ResetTimer(panelHandle, PANEL_TIMER_CMD_Process);
 	SetCtrlAttribute (panelHandle, PANEL_TIMER_CMD_Process, ATTR_ENABLED, 1); //使能处理命令timer
+	count =  StringLength(str);
 	i = ClientTCPWrite (pH_NetHandle, str, StringLength(str), _TCP_TIME_OUT);
 	gTimerCNT = 0;
 	EnableCtrlCMD();
@@ -631,7 +640,7 @@ void ProcessTimeOutErr(int iCMD)
 		case  _NET_CONNECT_TEST:
 			gNetConnectStatus = 0;
 			InsertTableMsg("网络中断","网络中断，自动重连中...");
-			if(0<ConnectToTCPServerEx (&pH_NetHandle, gNetPort, gNetIP, ClientTCPCB, NULL, 2000, TCP_ANY_LOCAL_PORT))
+			if(0>ConnectToTCPServerEx (&pH_NetHandle, gNetPort, gNetIP, ClientTCPCB, NULL, 2000, TCP_ANY_LOCAL_PORT))
 			{
 				InsertTableMsg("命令","网络自动重连成功");
 				gNetConnectStatus = 1;
@@ -702,14 +711,14 @@ void InsertGraphLabel(int channel)
 	SetCtrlAttribute (pH_CMD, PANEL_10_GRAPH1, ATTR_LABEL_LEFT, VAL_AUTO_CENTER);
 }
 
-//使能网络数据接收
+//使能网络数据接收,tick is 0.2S
 int CVICALLBACK PANEL_EnableRXD (int panel, int control, int event,
 								 void *callbackData, int eventData1, int eventData2)
 {
 	switch (event)
 	{
 		case EVENT_TIMER_TICK:
-			giTCPDisable = 0;
+			giTCPDisable = 0;   //使能接收
 			SetCtrlAttribute (panelHandle, PANEL_TIMER_EnableRXD, ATTR_ENABLED, 0);
 			break;
 	}
@@ -894,7 +903,7 @@ void InitialDefaultCtrl(void)
 	//设置主面板的列数
 	for(i=0; i<60; i++)
 	{
-		if(giChanResSel[i]==1)
+		if(giChanResSel[i]==1) // 信号通道
 		{   //PANEL_TABLE,主界面上，线阻测试table1 
 			InsertTableColumns (panelHandle, PANEL_TABLE, -1, 1, VAL_CELL_NUMERIC);//在表的末尾,插入1列 
 			GetNumTableColumns (panelHandle, PANEL_TABLE, &iTmp);  //获取列数
@@ -903,7 +912,7 @@ void InitialDefaultCtrl(void)
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE, iTmp, ATTR_LABEL_TEXT, sTmp);
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE, iTmp, ATTR_COLUMN_WIDTH, 38);
 		}
-		if(giChanResSel[i]==2)
+		if(giChanResSel[i]==2) // 动力通道
 		{    //PANEL_TABLE_2,主界面上，线阻测试table2
 			InsertTableColumns (panelHandle, PANEL_TABLE_2, -1, 1, VAL_CELL_NUMERIC);	 //主界面上，线阻测试table2 
 			GetNumTableColumns (panelHandle, PANEL_TABLE_2, &iTmp);
@@ -960,16 +969,16 @@ void InitialDefaultCtrl(void)
 	SetTableCellAttribute (pH_DeviceIP, PANEL_TABLE_9, MakePoint(1,2), ATTR_CTRL_VAL, giChanResSel[63]);//设定噪声阈值最大值 
 	SetTableCellAttribute (pH_DeviceIP, PANEL_TABLE_9, MakePoint(1,1), ATTR_CTRL_VAL, giChanResSel[67]);//设定噪声阈值最小值
 //设置大电流HI面板滑环的显示
-	for(i=0;i<40;i++)
+	for(i=0;i<6;i++)  // mmsun
 	{   // 40路动力滑道，双击某一滑道，启动该滑道测量 
-		if( (giChanResSel[i]!=1) && (giChanResSel[i]!=2) )
+		if(/* (giChanResSel[i]!=1) && */(giChanResSel[i]!=2) )
 			SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_LT_GRAY);
 		else 			
 			SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
 	}
-	for(i=0;i<40;i++)
+	for(i=0;i<6;i++)   //mmsun
 	{   // 40路动力滑道，测试结果 
-		if( (giChanResSel[i]!=1) && (giChanResSel[i]!=2) )
+		if( /*(giChanResSel[i]!=1) &&*/ (giChanResSel[i]!=2) )
 			SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, 0x00F0F0F0);
 		else 
 			SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
@@ -1020,7 +1029,7 @@ void InitialDefaultCtrl(void)
 	
 }
 
-void SetAlarmDisplay(void)
+void SetAlarmDisplay(void)  //结果显示处理
 {
 	double fMax, fMin;
 	int i,j;
@@ -1150,11 +1159,12 @@ int CVICALLBACK PANEL_DEL_ALARM (int panel, int control, int event,
 int CVICALLBACK PANEL_Single_DAQ (int panel, int control, int event,
 								  void *callbackData, int eventData1, int eventData2)
 {
-	int i;
+	int i,length;
 	switch (event)
 	{
 		case EVENT_COMMIT:
 			sprintf(gComBufT, "[M]>RL1#");  //打开线组继电器
+			length = strlen(gComBufT);
 			if(-2==SendComCMD(gComRLY, strlen(gComBufT), gComBufT) )
 				return -1;
 			Delay(1);

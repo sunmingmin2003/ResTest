@@ -1,5 +1,6 @@
 /**************************************************************************/
 /* LabWindows/CVI User Interface Resource (UIR) Include File              */
+/* Copyright (c) National Instruments 2018. All Rights Reserved.          */
 /*                                                                        */
 /* WARNING: Do not add to, delete from, or otherwise modify the contents  */
 /*          of this include file.                                         */
@@ -53,8 +54,8 @@
 #define  PANEL_TIMER_AutoConnect          38      /* control type: timer, callback function: PANEL_AutoConnect */
 #define  PANEL_TIMER_EnableRXD            39      /* control type: timer, callback function: PANEL_EnableRXD */
 #define  PANEL_TIMER_NetStatus            40      /* control type: timer, callback function: PANEL_NetStatus */
-#define  PANEL_PICTUREBUTTON              41      /* control type: pictButton, callback function: PANEL_HV_Test */
-#define  PANEL_DECORATION_10              42      /* control type: deco, callback function: (none) */
+#define  PANEL_DECORATION_10              41      /* control type: deco, callback function: (none) */
+#define  PANEL_PICTUREBUTTON              42      /* control type: pictButton, callback function: PANEL_HV_Test */
 
 #define  PANEL_10                         2
 #define  PANEL_10_BTNQuit                 2       /* control type: command, callback function: PANEL_10_OnBTNQuit */
