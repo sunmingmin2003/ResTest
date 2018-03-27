@@ -10,7 +10,25 @@
 #include "FiberSensor.h"
 #include "variable.h"
 static int giInsulationThreshold = 10;
-static int giCurrentInsulationChan=-1;  
+static int giCurrentInsulationChan=1;  
+
+float fHiVolt;
+float iHiRes, iLiRes;
+float  fTestTime;
+/**************************************
+** 单环绝缘阻抗测试                      **
+** step1:open all relay,set mode,set current voltage para
+** step2:close resp relay
+** step3:start test
+** step4:testing for setted time,juduge test wether finished
+** step5:open resp relay
+** setp6:judement reusult
+
+** flag 0:滑间;1:对地
+***************************************/
+int irstep=1;
+int irflag = 0;
+int IRSlipRelationTest(int Channel,int flag);
 
 int CVICALLBACK PANEL_13_PreTest (int panel, int control, int event,
 								  void *callbackData, int eventData1, int eventData2)
@@ -62,10 +80,54 @@ int CVICALLBACK PANEL_13_Start_Test (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_COMMIT:
+			{
+			GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HV,&fHiVolt);
+	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HRES,&iHiRes); 
+	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_LRES,&iLiRes); 
+	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_TIME,&fTestTime);
+			irflag = 0; 
+			
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 1); // 启动下一滑道测试定时器
+			}
+			break;
 	}
 	return 0;
 }
+
+int CVICALLBACK PANEL_13_StartTestSec (int panel, int control, int event,
+									   void *callbackData, int eventData1, int eventData2)
+{
+	switch (event)
+	{
+		case EVENT_COMMIT:
+		{
+			GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HV,&fHiVolt);
+	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HRES,&iHiRes); 
+	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_LRES,&iLiRes); 
+	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_TIME,&fTestTime);
+	
+			irflag = 1; 
+			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 1); // 启动下一滑道测试定时器
+		}
+			
+			break;
+	}
+	return 0;
+}
+
+/*
+int CVICALLBACK PANEL_13_Start_Test (int panel, int control, int event,
+									 void *callbackData, int eventData1, int eventData2)
+{
+	switch (event)
+	{
+		case EVENT_COMMIT:
+
+			break;
+	}
+	return 0;
+}
+*/
 
 //停止测试
 int CVICALLBACK PANEL_13_Stop_Test (int panel, int control, int event,
@@ -80,11 +142,11 @@ int CVICALLBACK PANEL_13_Stop_Test (int panel, int control, int event,
 			
 			giCurrentInsulationChan = -1;
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 0);  
-			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_2, ATTR_ENABLED, 0);
+		//	SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_2, ATTR_ENABLED, 0);
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_3, ATTR_ENABLED, 0); 
 			SetCtrlVal(pH_InsulationTest, PANEL_13_NUMERICSLIDE, 0.0);  			
 			ResetTimer (pH_InsulationTest, PANEL_13_TIMER);
-			ResetTimer (pH_InsulationTest, PANEL_13_TIMER_2);  
+		//	ResetTimer (pH_InsulationTest, PANEL_13_TIMER_2);  
 			ResetTimer (pH_InsulationTest, PANEL_13_TIMER_3);  
 			sprintf(gComBufT, "[M]!FW#");
 			i = SendComCMD(gComRLY, strlen(gComBufT), gComBufT);			
@@ -128,7 +190,7 @@ int CVICALLBACK PANEL_13_Insulation_ReadBack (int panel, int control, int event,
 //下一次测量	
 			ResetTimer(pH_InsulationTest, PANEL_13_TIMER); 
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 1); 	 //2秒后开始下一滑道测试
-			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_2, ATTR_ENABLED, 0); //20秒后开始读取绝缘值
+		//	SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_2, ATTR_ENABLED, 0); //20秒后开始读取绝缘值
 			ResetTimer(pH_InsulationTest, PANEL_13_TIMER_3); //显示进度
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_3, ATTR_ENABLED, 0); 
 			SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint((int)(0.5*giCurrentInsulationChan)+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);  
@@ -147,7 +209,61 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_TIMER_TICK:
-			
+			{
+				if(irflag==0)
+				{
+				   if(giCurrentInsulationChan<38)
+				   {
+				        sprintf(sTxt,"正在测试第%d滑道间绝缘电阻",giCurrentInsulationChan);
+				        SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+						
+				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2))&&(irstep<=5)  )
+				        {
+			                IRSlipRelationTest(giCurrentInsulationChan,0);
+				        }
+				        else
+				        {
+					        irstep=1;
+				            giCurrentInsulationChan++;	 
+				        }
+				   }
+				   else
+				   {
+				       giCurrentInsulationChan=1;
+				       SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
+			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_INTERVAL, 1.0);
+			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 0); //disable timer	
+					   
+				   }
+				}
+				else
+				{
+					if(giCurrentInsulationChan<38)
+				   {
+				        sprintf(sTxt,"正在测试第%d滑道间绝缘电阻",giCurrentInsulationChan);
+				        SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+						
+				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2))&&(irstep<=5)  )
+				        {
+			                IRSlipRelationTest(giCurrentInsulationChan,1);
+				        }
+				        else
+				        {
+					        irstep=1;
+				            giCurrentInsulationChan++;	 
+				        }
+				   }
+				   else
+				   {
+				       giCurrentInsulationChan=1;
+				       SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
+			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_INTERVAL, 1.0);
+			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 0); //disable timer						   
+				   }
+
+				}
+			}
+			/*
 			for(i=0;i<80;i++)
 			{
 //如果超过限制，则停止测量
@@ -222,7 +338,7 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 			ResetTimer(pH_InsulationTest, PANEL_13_TIMER_3); 			
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_2, ATTR_ENABLED, 1); //启动20S读数据计时器
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER_3, ATTR_ENABLED, 1); //显示进度
-			
+		    */	
 			break;
 	}
 	return 0;
@@ -255,3 +371,110 @@ int CVICALLBACK PANEL_13_Progrocess (int panel, int control, int event,
 	}
 	return 0;
 }
+
+/**************************************
+** 单环耐压测试                      **
+** step1:open all relay,set mode,set current voltage para
+** step2:close resp relay
+** step3:start test
+** step4:testing for setted time,juduge test wether finished
+** step5:open resp relay
+** setp6:judement reusult
+
+** flag 0:滑间;1:对地
+*/
+int IRSlipRelationTest(int Channel,int flag)   
+{
+   int i;
+   char strTmp[20];
+   switch(irstep)
+	{
+		case 1:
+			{
+			  OpenRelay();
+			  SetInstruct("AIN:","FUNC ","MANU","");    //Switch to MANU Mode
+			  SetInstruct("MANU:","EDIT:","MODE ","IR"); //Switch to MANU IR Mode 
+			  sprintf(strTmp,"%g",fHiVolt); 
+			  SetInstruct("MANU:","IR:","VOLT ",strTmp);  // kV
+			  sprintf(strTmp,"%g",iHiRes); 
+			  SetInstruct("MANU:","IR: ","RHIS ",strTmp);   // mA
+			  sprintf(strTmp,"%g",iLiRes); 
+			  SetInstruct("MANU:","IR:","RLOS ",strTmp);    // mA
+			  sprintf(strTmp,"%g",fTestTime); 
+			  SetInstruct("MANU:","IR:","TTIM ",strTmp);   // S 
+			  SetInstruct("MANU:","IR:","FREQ ","50");   // Hz
+			  
+			  irstep=2;  
+			  break;
+			}
+		case 2:
+			{
+			  CloseHiRelay(Channel,flag);
+			  irstep=3;
+              break;	
+			}
+		case 3:
+			{
+			  SetInstruct("FUNC:","TEST ","ON","");
+			  irstep=4;  
+			  break;
+			}
+		case 4:
+			{
+			  QueryInstruct("FUNC:","TEST");
+			  i=FindPattern(gComBufR,0,-1,"OFF",0,0);
+			  if(i>0)
+			    irstep=5;  
+			  break;
+			}
+		case 5:
+			{
+			  int j,k,l,m;
+			  OpenRelay(); 
+			  QueryInstruct("MEAS ",""); 
+			  i=FindPattern(gComBufR,0,-1,"FAIL",0,0);
+			  
+			  j=FindPattern(gComBufR,0,-1,",",0,0);
+			  k=FindPattern(gComBufR,j+1,-1,",",0,0);
+			  l=FindPattern(gComBufR,k+1,-1,",",0,0); 
+			  m=FindPattern(gComBufR,l+1,-1,",",0,0); 
+			  CopyString(strTmp,0,gComBufR,l+1,(m-l)-5);
+			  
+			  Point CurPoint;//(Channel,1);
+			  CurPoint.x= Channel;
+			  if(flag==0)
+			  {
+                CurPoint.y=1;
+			  }
+              else
+			  {
+				 CurPoint.y=2;  
+			  }
+			  if(i>0)
+			  {  
+					
+				 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, CurPoint, ATTR_CTRL_VAL, "N");
+			  }
+			  else 
+			  {
+			     SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, CurPoint, ATTR_CTRL_VAL, "Y"); 
+			  }
+			  
+			  if(Channel>20)
+			  {
+				CurPoint.x= Channel-20;
+				SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, CurPoint, ATTR_CTRL_VAL, strTmp); 
+			  }
+			  else
+			  {
+				CurPoint.x= Channel;
+				SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, strTmp); 
+				
+			  }
+			  irstep=6;  
+			  break;
+			}
+	}	
+	return 0;
+}
+

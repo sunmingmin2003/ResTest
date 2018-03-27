@@ -999,8 +999,8 @@ void InitialDefaultCtrl(void)
 		else 
 		{
 			SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
-			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "Y");
-			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "Y");
+			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
+			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
 		}
 	}
 //…Ë÷√Insulation√Ê∞Â	

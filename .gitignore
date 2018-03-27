@@ -1,0 +1,15 @@
+#*.ico
+#*.png
+#*.bat
+*.cds
+#*.res
+*.exe
+#*.prj
+*.cdb
+#*.cws
+cvibuild.FiberSensor/
+MSCOMCT2.OCX
+RegionName.rnf
+#.gitignore
+*.vof
+#*.jpg

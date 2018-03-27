@@ -81,8 +81,8 @@ int giInsulationThreshold, giInsulationTestTime;
 unsigned char gBufRev[2*gDataMaxLen];
 unsigned char gDataBuf[2*gDataMaxLen];		//用来处理命令的缓冲区
 char gBufTxd[2048];
-char gComBufT[2048];   
-char gComBufR[4096];        
+char gComBufT[64/*2048*/];   
+char gComBufR[64/*4096*/];        
 
 double gfDisplayData[gDataMaxLen];		   //保存当前数据的数组
 double gfDataSaveBuf[gDataMaxLen];
@@ -206,4 +206,29 @@ int SendComCMD(int, int, char*);
 //大电流：交叉线，双母头
 //高压：交叉线，双母头
 //继电器：直连线，公母头
-//绝缘仪：直连线，公母头              
+//绝缘仪：直连线，公母头 
+
+// mmsun add
+/**************************************
+** 设置指令                          **
+***************************************/
+int SetInstruct(char* mode,char*testmode,char* cmd,char* Value);
+
+/**************************************
+** 查询指令                          **
+***************************************/
+int QueryInstruct(char* mode,char*testmode);
+
+
+/*****************************
+open relay 
+*****************************/
+int OpenRelay();
+
+/*******************
+闭合一路高压继电器
+flag:0，滑道之间
+flag:1, 滑道对地
+**/
+int CloseHiRelay(int Channel,int flag );
+
