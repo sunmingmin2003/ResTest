@@ -289,9 +289,6 @@ int main (int argc, char *argv[])
 	if ((pH_HVTest = LoadPanel (0, "FiberSensor.uir", PANEL_7)) < 0)
 		return -1;	
 	
-	if ((pH_HITest = LoadPanel (0, "FiberSensor.uir", PANEL_8)) < 0)
-		return -1;	
-	
 	if ((pH_RecordSet = LoadPanel (0, "FiberSensor.uir", PANEL_9)) < 0)
 		return -1;
 
@@ -312,12 +309,15 @@ int main (int argc, char *argv[])
 //---------------------------------
 	if ((panelHandle = LoadPanel (0, "FiberSensor.uir", PANEL)) < 0)
 		return -1;
+	
+	if ((pH_HITest = LoadPanel (0, "FiberSensor.uir", PANEL_8)) < 0)
+		return -1;	
 
 	
-	pHMenu = GetPanelMenuBar(panelHandle);
-	DisplayPanel (panelHandle);
+	pHMenu = GetPanelMenuBar(pH_HITest);
+	DisplayPanel (pH_HITest);
 	//显示区域窗口大小设置
-	SetPanelAttribute (panelHandle, ATTR_WINDOW_ZOOM, VAL_MAXIMIZE);
+	SetPanelAttribute (pH_HITest/*panelHandle*/, ATTR_WINDOW_ZOOM, VAL_MAXIMIZE);
 	GetScreenSize (&giScreenHight, &giScreenWidth);
 	giGraphAreaWidth = giScreenWidth - _GRAPH_AREA_LEFT;
 	giGraphAreaHight = giScreenHight - _GRAPH_AREA_TOP - _MSG_AREA_HIGHT;

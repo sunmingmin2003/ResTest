@@ -1,6 +1,7 @@
 /*        
   滑道大电流测试
 */        
+#include <formatio.h>
 #include <rs232.h>
 #include <utility.h>
 #include <ansi_c.h>
@@ -8,8 +9,11 @@
 #include "FiberSensor.h"
 #include "variable.h"
 static giCurrentRes = 1;
-static step =0;
+int giMsgRowCurrent1;
+static step =1;
 
+void InsertTableMsg1(char *str1, char *str2);
+float fTestTime;
 /********** mmsun add  ***************/
 /* 大电流通道测试 
 ** intput: 通道序号  */
@@ -25,6 +29,9 @@ int CloseHIRelay(int RelayChannel);
 ** intput: 通道序号   */
 int OpenHIRelay();  
 
+/****************
+设置大电流 **/
+int SetCurrent();
 /* 大电流发生器开始工作 
 ** */
 int StartCurrent();
@@ -131,7 +138,8 @@ int CVICALLBACK PANEL_8_Start_Test (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_COMMIT:
-			step = 0;   
+			step = 1;     
+			GetCtrlVal(pH_HITest,PANEL_8_NUMERIC,&fTestTime); 
 			ResetTimer(pH_HITest, PANEL_8_TIMER);
 			SetCtrlAttribute (pH_HITest, PANEL_8_TIMER, ATTR_ENABLED, 1);   
 			
@@ -304,10 +312,29 @@ int CVICALLBACK PANEL_8_Progress (int panel, int control, int event,
 	int iColor;
 	double fProgress,fTime;
 	switch (event)
-	{
+	{	char sTxt[50]; 
 		case EVENT_TIMER_TICK:
 			{
-			  ChannlHiCurTest(1);	
+			  if(giCurrentRes<8)
+			  {
+				 sprintf(sTxt,"正在测试第%d滑道大电流",giCurrentRes);
+				 SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
+				if((giChanResSel[giCurrentRes-1]==1)&&(step <=5))
+			    {
+			       ChannlHiCurTest(giCurrentRes);
+				}
+				else
+				{
+					giCurrentRes++;
+					step=1;
+				}
+			  }
+			  else
+			  {
+				SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, "测试完毕可以重新启动"); 
+			    ResetTimer(pH_HITest, PANEL_8_TIMER);
+			    SetCtrlAttribute (pH_HITest, PANEL_8_TIMER, ATTR_ENABLED, 0);   
+			  }
 			}
 			/*
 			GetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(giCurrentRes,1), ATTR_CMD_BUTTON_COLOR, &iColor);
@@ -334,6 +361,10 @@ int CVICALLBACK PANEL_8_Progress (int panel, int control, int event,
 	return 0;
 }
 
+/*******************************
+** step1:closeRealy
+** step2:start current
+********************************/
 int ChannlHiCurTest(int Channel)
 {
 	double fProgress,fTime;
@@ -341,25 +372,26 @@ int ChannlHiCurTest(int Channel)
 	
 	switch(step)
 	{
-		case 0: //close relay
+		case 1: //close relay
 			{
+			  SetCurrent();
 			  CloseHIRelay(Channel-1);
-			  step =1;
+			  step =2;
 			}
 			break;
-		case 1: //start current
+		case 2: //start current
 			{
 			  StartCurrent();
-			  step = 2;
+			  step = 3;
 			}
 			break;
-		case 2:// testing
+		case 3:// testing
 			{
-			  iCurrent = ReadCurrent();
-			  SetCtrlVal(pH_HITest, PANEL_8_NUMERICMETER, iCurrent); 
-			  GetCtrlVal(pH_HITest, PANEL_8_NUMERIC, &fTime);  
+			 // iCurrent = ReadCurrent();
+			 // SetCtrlVal(pH_HITest, PANEL_8_NUMERICMETER_2, iCurrent); 
+			  GetCtrlVal(pH_HITest, PANEL_8_NUMERIC, &fTestTime);  
 			  GetCtrlVal(pH_HITest, PANEL_8_NUMERICSLIDE, &fProgress);
-			  SetCtrlVal(pH_HITest, PANEL_8_NUMERICSLIDE, ((fProgress+1.0/fTime)>1)?1:(fProgress+1.0/fTime) );
+			  SetCtrlVal(pH_HITest, PANEL_8_NUMERICSLIDE, ((fProgress+1.0/fTestTime)>1)?1:(fProgress+1.0/fTestTime) );
 			  if(fProgress>=1)
 			    {
 				  SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(giCurrentRes,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);  
@@ -368,24 +400,25 @@ int ChannlHiCurTest(int Channel)
 				
 				  //sprintf(gComBufT, "[M]!FW#");
 				  //SendComCMD(gComRLY, strlen(gComBufT), gComBufT);
-				  //断开所有继电器  
-				  	step = 3;  
+				  //断开所有继电器 
+				   	StopCurrent(); 
+				  	step = 5;  
 				  return 0;
 			    }
 			  
 				
 			}
 			break;
-		case 3:  // stop current
+		case 4:  // stop current
 			{
 				StopCurrent();
-				step = 4;
+				step = 5;
 			}
 			break;
-		case 4: // open relay,update stauts
+		case 5: // open relay,update stauts
 			{
 			   OpenHIRelay();
-			   //step = 0;
+			   step = 6;
 			}
 			break;
 	}
@@ -425,27 +458,70 @@ int StartCurrent()
 			i = SendComCMD(gComHI, 8, gComBufT); //大电流发生器
 			if(i<0)
 			{
-				MessagePopup("提示","电流启动命令失败，请检查！");
+				InsertTableMsg1("提示","电流启动命令失败，请检查！");
 				return -1;
 			}
 			
 			i = ComRd (gComHI, gComBufR, 20); //大电流发生器  
 			if(i<8)
 			{
-				MessagePopup("提示","电流启动命令失败，请检查！");     
+				InsertTableMsg1("提示","电流启动命令失败，请检查！");     
 				return -1;
 			}
 			
 			iStatus = (gComBufR[i-1]== gComBufT[7]) & (gComBufR[i-2]== gComBufT[6]) & (gComBufR[i-3]== gComBufT[5]) & (gComBufR[i-4]== gComBufT[4]) & (gComBufR[i-5]== gComBufT[3]) & (gComBufR[i-6]== gComBufT[2]) & (gComBufR[i-7]== gComBufT[1]) &(gComBufR[i-8]== gComBufT[0]);
 			if(iStatus==0)
 			{
-				MessagePopup("提示","电流启动命令失败，请检查！");     
+				InsertTableMsg1("提示","电流启动命令失败，请检查！");     
 				return -1;
 			}
 			FlushInQ(gComHI);//大电流发生器  
 			FlushOutQ(gComHI); //大电流发生器  
-			MessagePopup("提示","读电流启动成功！");
+			InsertTableMsg1("提示","读电流启动成功！");
   return 0;
+}
+
+/****************
+设置大电流 **/
+int SetCurrent()
+{			
+	int i=0,iStatus=0; 
+			GetCtrlVal(pH_HITest, PANEL_8_NUMERICMETER, &i);
+			if(i>200)
+				return -1;
+			gComBufT[0] = 0x05;
+			gComBufT[1] = 0x16;
+			gComBufT[2] = 0x00;
+			gComBufT[3] = 0x03;
+			gComBufT[4] = (i>255)?(i/256):0;
+			gComBufT[5] = (i>255)?(i%256):i;
+			gComBufT[6] = 0xB9;
+			gComBufT[7] = 0x5F;
+			i = SendComCMD(gComHI, 8, gComBufT); //大电流发生器  
+			if(i<0)
+			{
+				InsertTableMsg1("提示","设置电流值失败1，请检查！");
+				return -1;
+			}
+			
+			i = ComRd (gComHI, gComBufR, 20); //大电流发生器  
+			if(i<8)
+			{
+				InsertTableMsg1("提示","设置电流值失败2，请检查！");     
+				return -1;
+			}
+			
+			iStatus = (gComBufR[i-5]== gComBufT[3]) & (gComBufR[i-6]== gComBufT[2]) & (gComBufR[i-7]== gComBufT[1]) &(gComBufR[i-8]== gComBufT[0]);
+			if(iStatus==0)
+			{
+				InsertTableMsg1("提示","设置电流值失败3，请检查！");     
+				return -1;
+			}
+			FlushInQ(gComHI);   //大电流发生器  
+			FlushOutQ(gComHI);  //大电流发生器  
+			InsertTableMsg1("提示","设置电流值成功！");
+			
+		  	return 0; 
 }
 
 int  ReadCurrent()
@@ -464,7 +540,7 @@ int  ReadCurrent()
 			i = SendComCMD(gComHI, 8, gComBufT); //大电流发生器
 			if(i<0)
 			{
-				MessagePopup("提示","读电流启动命令失败1，请检查！");
+				InsertTableMsg1("提示","读电流启动命令失败1，请检查！");
 				return -1;
 			}
 			
@@ -475,14 +551,14 @@ int  ReadCurrent()
 			{  
 				FlushInQ(gComHI);//大电流发生器  
 			    FlushOutQ(gComHI); //大电流发生器 
-				MessagePopup("提示","读电流启动命令失败2，请检查！");     
+				InsertTableMsg1("提示","读电流启动命令失败2，请检查！");     
 				return -1;
 			}
 			
 			iStatus = /*(gComBufR[i-1]== gComBufT[7]) & (gComBufR[i-2]== gComBufT[6]) & (gComBufR[i-3]== gComBufT[5]) & (gComBufR[i-4]== gComBufT[4]) & (gComBufR[i-5]== gComBufT[3]) & (gComBufR[i-6]== gComBufT[2]) & */(gComBufR[i-7]== gComBufT[1]) &(gComBufR[i-8]== gComBufT[0]);
 			if(iStatus==0)
 			{
-				MessagePopup("提示","读电流启动命令失败3，请检查！");     
+				InsertTableMsg1("提示","读电流启动命令失败3，请检查！");     
 				return -1;
 			}
 			else
@@ -491,7 +567,7 @@ int  ReadCurrent()
 			}
 			FlushInQ(gComHI);//大电流发生器  
 			FlushOutQ(gComHI); //大电流发生器  
-		//	MessagePopup("提示","读电流启动成功！");
+			InsertTableMsg1("提示","读电流启动成功！");
 	
 	return OutCurrent;
 }
@@ -510,27 +586,60 @@ int StopCurrent()
 	i = SendComCMD(gComHI, 8, gComBufT); //大电流发生器  
 	if(i<0)
 	   {
-		 MessagePopup("提示","停止电流命令失败，请检查！");
+		 InsertTableMsg1("提示","停止电流命令失败，请检查！");
 			return -1;
 	   }
 			
 	i = ComRd (gComHI, gComBufR, 20); //大电流发生器  
 	if(i<8)
 	  {
-		MessagePopup("提示","停止电流命令失败，请检查！");     
+		InsertTableMsg1("提示","停止电流命令失败，请检查！");     
 		  return -1;
 	   }
 			
 	iStatus = (gComBufR[i-1]== gComBufT[7]) & (gComBufR[i-2]== gComBufT[6]) & (gComBufR[i-3]== gComBufT[5]) & (gComBufR[i-4]== gComBufT[4]) & (gComBufR[i-5]== gComBufT[3]) & (gComBufR[i-6]== gComBufT[2]) & (gComBufR[i-7]== gComBufT[1]) &(gComBufR[i-8]== gComBufT[0]);
 	if(iStatus==0)
 	   {
-			MessagePopup("提示","停止电流命令失败，请检查！");     
+			InsertTableMsg1("提示","停止电流命令失败，请检查！");     
 			return -1;
 	   }
 	FlushInQ(gComHI); //大电流发生器  
 	FlushOutQ(gComHI);
-    MessagePopup("提示","停止电流命令成功！");
+    InsertTableMsg1("提示","停止电流命令成功！");
 	
 	return 0;
 	
+}
+
+void InsertTableMsg1(char *str1, char *str2)
+{
+	Point MyPoint;
+	char strTime[20];
+	char strTmp[20];
+	sprintf(strTmp, "%s", DateStr() );
+	CopyString (strTime, 0, strTmp, 0, 5);
+	sprintf(strTime, "%s  %s", strTime, TimeStr()) ;
+
+	if(giMsgRowCurrent1 <20)
+	{
+		giMsgRowCurrent1 ++;
+	}
+	else
+	{
+		giMsgRowCurrent1 = 20;
+		DeleteTableRows (pH_HITest, PANEL_TABLE_MSG, 1, 1);
+		InsertTableRows (pH_HITest, PANEL_TABLE_MSG, -1, 1, VAL_CELL_STRING);
+	}
+	MyPoint.y = giMsgRowCurrent1;
+
+	MyPoint.x =1;
+	SetTableCellAttribute (pH_HITest, PANEL_TABLE_MSG, MyPoint, ATTR_CTRL_VAL, strTime);
+
+	MyPoint.x =2;
+	SetTableCellAttribute (pH_HITest, PANEL_TABLE_MSG, MyPoint, ATTR_CTRL_VAL, str1);
+
+	MyPoint.x =3;
+	SetTableCellAttribute (pH_HITest, PANEL_TABLE_MSG, MyPoint, ATTR_CTRL_VAL, str2);
+
+	SetCtrlAttribute (pH_HITest, PANEL_TABLE_MSG, ATTR_FIRST_VISIBLE_ROW, (giMsgRowCurrent1>3)?(giMsgRowCurrent1-3):1 );
 }

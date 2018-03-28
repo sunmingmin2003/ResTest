@@ -200,6 +200,24 @@ int CVICALLBACK PANEL_13_Insulation_ReadBack (int panel, int control, int event,
 	return 0;
 }
 
+int CVICALLBACK PANEL_13_Res_Test (int panel, int control, int event,
+								   void *callbackData, int eventData1, int eventData2)
+{   
+	int i;    
+	switch (event)
+	{
+		case EVENT_COMMIT:
+			 InstallPopup(panelHandle);
+			 sprintf(gComBufT, "[M]!FW#");
+			 i = SendComCMD(gComRLY, strlen(gComBufT), gComBufT);	
+			 if(i<0)
+				return -1;
+			 HidePanel(pH_InsulationTest);     
+			break;
+	}
+	return 0;
+}
+
  //2秒钟后下一滑道测试
 int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 		void *callbackData, int eventData1, int eventData2)
