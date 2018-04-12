@@ -80,13 +80,13 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 				giNumRead = giNumRead + i;
 			}
 			giTCPReadCNT++;
-//如果超过100次数据仍然没有读完毕
+            //如果超过100次数据仍然没有读完毕
 			if(giTCPReadCNT==100)
 			{
 				TCPReadReset(); //清空缓冲区   
 				return 0;
 			}
-//如果数据读取完毕并且数据正确
+            //如果数据读取完毕并且数据正确
 			if( (0==(iTmp - giNumRead)) && (gDataBuf[giNumRead-1]==0x55) )
 			{
 				giNumRead  = 0;
@@ -99,9 +99,9 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 			{
 				case _DATA_ID_DATA_PACKET:
 				
-					if((gDataBuf[13]<0) || (gDataBuf[13]>1))
+					if((gDataBuf[13]<0) || (gDataBuf[13]>1))// 0 or 1
 						return -1;
-//-----如果出现报警，则终止数据传输					
+                    //-----如果出现报警，则终止数据传输					
 					if(giEnableDataRev ==0)
 						return -1; 
 
@@ -110,7 +110,7 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 					{
 						for(j=0; j<900; j++)
 						{
-							gfChanResVal[i][gDataBuf[13]*900+j] = gDataBuf[i*1800+22+2*j] + (gDataBuf[i*1800+23+2*j]<<8);	   //gDataBuf[13]表示第几次传输的数据
+							gfChanResVal[i][gDataBuf[13]*900+j] = gDataBuf[i*1800+22+2*j] + (gDataBuf[i*1800+23+2*j]<<8);//gDataBuf[13]表示第几次传输的数据
 							if(gfChanResVal[i][gDataBuf[13]*900+j] >=32768)
 								gfChanResVal[i][gDataBuf[13]*900+j] =(0x7fff & (gDataBuf[i*1800+22+2*j] + (gDataBuf[i*1800+23+2*j]<<8)) ) * 16;
 						}
@@ -164,7 +164,7 @@ int CVICALLBACK ClientTCPCB (unsigned handle, int event, int error,
 //下面的是上位机需要拿定时器来处理的数据
 				default:
 					gNetCMDRev   = _DATA_CMD_READY; //只要接收到了命令，都表示当前是ready状态，接下来需要“命令定时器”来处理
-					giTCPDisable = 1;//禁止接收				//经过0.2s后才开始继续接收数据，以防止：接收到命令数据以后，定时器还没来及得处理命令，下面的数据又上来了，把数据给冲乱了
+					giTCPDisable = 1;//禁止接收	 //经过0.2s后才开始继续接收数据，以防止：接收到命令数据以后，定时器还没来及得处理命令，下面的数据又上来了，把数据给冲乱了
 					SetCtrlAttribute (panelHandle, PANEL_TIMER_EnableRXD, ATTR_ENABLED, 1);
 					break;
 			}
@@ -733,11 +733,18 @@ int CVICALLBACK PANEL_DAQ_START (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_COMMIT:
-			sprintf(gComBufT, "[M]>RL1#");  //打开线阻继电器
-			i = SendComCMD(gComRLY,  strlen(gComBufT), gComBufT);
-			if(-2 ==i)
-				return -1;
+		//	sprintf(gComBufT, "[M]>RL1#");  //打开线阻继电器
+		//	i = SendComCMD(gComRLY,  strlen(gComBufT), gComBufT);
+		//	if(-2 ==i)
+		//		return -1;
 			Delay(1);
+			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量等"); 
+			Delay(1);
+			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量等");
+			Delay(1);
+			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量等"); 
+			Delay(1);  
+			
 			giEnableDataRev = 1;    //启动数据刷新
 			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量");
 			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_COLOR, VAL_BLACK);
@@ -1080,7 +1087,7 @@ void SetAlarmDisplay(void)  //结果显示处理
 			
 			for(j=0; j<gChanDataLen; j++)
 			{
-				if(gfChanResVal[i][j] >(iTmp==1? giChanResSel[68]:giChanResSel[69]) )
+				if(gfChanResVal[i][j] >(iTmp==1? giChanResSel[68]:giChanResSel[69]) )//通断判断
 					iAlalrmNum++;
 			}
 			
@@ -1110,12 +1117,12 @@ void SetAlarmDisplay(void)  //结果显示处理
 	for(i=0;i<60;i++) //噪声阈值是否超限
 	{
 		MaxMin1D (gfChanResVal[i], gChanDataLen, &fMax, &iMaxIdx, &fMin, &iMinIdx);  		
-		if(giChanResSel[i]==1)
+		if(giChanResSel[i]==1) //动力环
 		{
 			if( (fMax-fMin)>(giChanResSel[60] -giChanResSel[64]))
 				SetTableCellAttribute (panelHandle, PANEL_TABLE_4, MakePoint(i+1,2), ATTR_TEXT_BGCOLOR, VAL_RED);  	//噪声设置为红色				
 		}
-		else if(giChanResSel[i]==2)
+		else if(giChanResSel[i]==2)//信号环
 		{
 			if( (fMax-fMin)>(giChanResSel[61] -giChanResSel[65]))  
 				SetTableCellAttribute (panelHandle, PANEL_TABLE_4, MakePoint(i+1,2), ATTR_TEXT_BGCOLOR, VAL_RED);  	//				

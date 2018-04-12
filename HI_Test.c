@@ -138,7 +138,8 @@ int CVICALLBACK PANEL_8_Start_Test (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_COMMIT:
-			step = 1;     
+			step = 1;  
+			giCurrentRes=1;
 			GetCtrlVal(pH_HITest,PANEL_8_NUMERIC,&fTestTime); 
 			ResetTimer(pH_HITest, PANEL_8_TIMER);
 			SetCtrlAttribute (pH_HITest, PANEL_8_TIMER, ATTR_ENABLED, 1);   
@@ -232,13 +233,19 @@ int CVICALLBACK PANEL_8_Set_HI (int panel, int control, int event,
 int CVICALLBACK PANEL_8_Stop_Test (int panel, int control, int event,
 								   void *callbackData, int eventData1, int eventData2)
 {
+	char sTxt[50];
 	int i,iStatus;
 	switch (event)
 	{
 		case EVENT_COMMIT: 
 			SetCtrlVal(pH_HITest, PANEL_8_NUMERICSLIDE, 0.0); 
 			SetCtrlAttribute (pH_HITest, PANEL_8_TIMER, ATTR_ENABLED, 0); 
-			 StopCurrent();
+			StopCurrent();
+			step = 1;  
+			giCurrentRes=1;
+		    sprintf(sTxt,"重新启动");
+		    SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
+		    OpenHIRelay(); 
 			 /*
 			gComBufT[0] = 0x05;
 			gComBufT[1] = 0x16;
@@ -317,14 +324,31 @@ int CVICALLBACK PANEL_8_Progress (int panel, int control, int event,
 			{
 			  if(giCurrentRes<8)
 			  {
-				 sprintf(sTxt,"正在测试第%d滑道大电流",giCurrentRes);
-				 SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
-				if((giChanResSel[giCurrentRes-1]==1)&&(step <=5))
+				if((giChanResSel[giCurrentRes-1]==1))
 			    {
+				   sprintf(sTxt,"正在测试第%d滑道大电流",giCurrentRes);
+				   SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
 			       ChannlHiCurTest(giCurrentRes);
+				   if((step >=6))
+				   {
+					 giCurrentRes++;
+					 step = 1;
+					 
+				   }
 				}
 				else
 				{
+					if(giChanResSel[giCurrentRes-1]==3)
+					{
+				      sprintf(sTxt,"第%d滑道是接地环,跳过",giCurrentRes);
+				      SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
+					}
+					else if((giChanResSel[giCurrentRes-1]==0)||(giChanResSel[giCurrentRes-1]==2))
+					{
+				      sprintf(sTxt,"第%d滑道不需要测试,跳过",giCurrentRes);
+				      SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
+					  	
+					}
 					giCurrentRes++;
 					step=1;
 				}
@@ -387,8 +411,9 @@ int ChannlHiCurTest(int Channel)
 			break;
 		case 3:// testing
 			{
-			 // iCurrent = ReadCurrent();
-			 // SetCtrlVal(pH_HITest, PANEL_8_NUMERICMETER_2, iCurrent); 
+			  iCurrent = ReadCurrent();
+			  SetCtrlVal(pH_HITest, PANEL_8_NUMERIC_2, iCurrent); 
+			  
 			  GetCtrlVal(pH_HITest, PANEL_8_NUMERIC, &fTestTime);  
 			  GetCtrlVal(pH_HITest, PANEL_8_NUMERICSLIDE, &fProgress);
 			  SetCtrlVal(pH_HITest, PANEL_8_NUMERICSLIDE, ((fProgress+1.0/fTestTime)>1)?1:(fProgress+1.0/fTestTime) );
@@ -555,13 +580,13 @@ int  ReadCurrent()
 				return -1;
 			}
 			
-			iStatus = /*(gComBufR[i-1]== gComBufT[7]) & (gComBufR[i-2]== gComBufT[6]) & (gComBufR[i-3]== gComBufT[5]) & (gComBufR[i-4]== gComBufT[4]) & (gComBufR[i-5]== gComBufT[3]) & (gComBufR[i-6]== gComBufT[2]) & */(gComBufR[i-7]== gComBufT[1]) &(gComBufR[i-8]== gComBufT[0]);
-			if(iStatus==0)
+			//iStatus = /*(gComBufR[i-1]== gComBufT[7]) & (gComBufR[i-2]== gComBufT[6]) & (gComBufR[i-3]== gComBufT[5]) & (gComBufR[i-4]== gComBufT[4]) & (gComBufR[i-5]== gComBufT[3]) & (gComBufR[i-6]== gComBufT[2]) & */(gComBufR[i-7]== gComBufT[1]) &(gComBufR[i-8]== gComBufT[0]);
+		/*	if(iStatus==0)
 			{
 				InsertTableMsg1("提示","读电流启动命令失败3，请检查！");     
 				return -1;
 			}
-			else
+			else   */
 			{
 			 OutCurrent = 	(gComBufR[i-4]*256 +gComBufR[i-3])/10;  
 			}

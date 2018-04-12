@@ -10,7 +10,7 @@
 double gfChanResVal[gChanNum][gChanDataLen];
 
 int giChanResSel[72];	 //0~60取值0（不选），1（信号），2（动力），3（A），4（）B，  60~63：噪声阈值最大值，64~68：噪声阈值最小值，69~71：通断最大值
-
+char *giChanDesp[60];
 
 #define MAX_ALARM_REGION 127
 #define MAX_DEL_FIBER_REGION 8  

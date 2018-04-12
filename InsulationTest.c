@@ -77,18 +77,37 @@ int CVICALLBACK PANEL_13_Start_Test (int panel, int control, int event,
 									 void *callbackData, int eventData1, int eventData2)
 {
 	int i;
+	Point CurPoint;
+	
 	switch (event)
 	{
 		case EVENT_COMMIT:
-			{
-			GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HV,&fHiVolt);
-	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HRES,&iHiRes); 
-	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_LRES,&iLiRes); 
-	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_TIME,&fTestTime);
-			irflag = 0; 
+		{  
+		   CurPoint.y=1;
+		   
+		   for(i=1;i<=38;i++)
+		   {
+			 CurPoint.x=i;  
+			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, CurPoint, ATTR_CTRL_VAL, "-");
+		   }
+		   
+		   for(i=1;i<=20;i++)
+		   {
+			 CurPoint.x=i; 
+			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, "");
+			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, CurPoint, ATTR_CTRL_VAL, "");  
+		   }
+		   
+		   GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HV,&fHiVolt);
+	       GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HRES,&iHiRes); 
+	       GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_LRES,&iLiRes); 
+	       GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_TIME,&fTestTime);
+		   irflag = 0; 
 			
-			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 1); // 启动下一滑道测试定时器
-			}
+		   SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_4,ATTR_ENABLED,1);   
+			
+		   SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 1); // 启动下一滑道测试定时器
+		}
 			break;
 	}
 	return 0;
@@ -97,16 +116,37 @@ int CVICALLBACK PANEL_13_Start_Test (int panel, int control, int event,
 int CVICALLBACK PANEL_13_StartTestSec (int panel, int control, int event,
 									   void *callbackData, int eventData1, int eventData2)
 {
+	int i;
+	Point CurPoint;
+	
 	switch (event)
 	{
 		case EVENT_COMMIT:
 		{
+		   CurPoint.y=2;
+		   
+		   for(i=1;i<=38;i++)
+		   {
+			 CurPoint.x=i;  
+			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, CurPoint, ATTR_CTRL_VAL, "-");
+		   }
+		   
+		   for(i=1;i<=20;i++)
+		   {
+			 CurPoint.x=i; 
+			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, "");
+			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, CurPoint, ATTR_CTRL_VAL, "");  
+		   }
+			
 			GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HV,&fHiVolt);
 	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HRES,&iHiRes); 
 	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_LRES,&iLiRes); 
 	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_TIME,&fTestTime);
 	
 			irflag = 1; 
+			
+			SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_4,ATTR_ENABLED,1); 
+			
 			SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 1); // 启动下一滑道测试定时器
 		}
 			
@@ -149,7 +189,17 @@ int CVICALLBACK PANEL_13_Stop_Test (int panel, int control, int event,
 		//	ResetTimer (pH_InsulationTest, PANEL_13_TIMER_2);  
 			ResetTimer (pH_InsulationTest, PANEL_13_TIMER_3);  
 			sprintf(gComBufT, "[M]!FW#");
-			i = SendComCMD(gComRLY, strlen(gComBufT), gComBufT);			
+			i = SendComCMD(gComRLY, strlen(gComBufT), gComBufT);
+			
+			giCurrentInsulationChan =1;
+			irstep=1;
+			
+			SetCtrlAttribute(pH_InsulationTest, PANEL_13_cButtonPrint_3,ATTR_LABEL_TEXT,"测试完毕,可重新启动"); 
+			SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_3,ATTR_ENABLED,1); 
+		    SetCtrlAttribute(pH_InsulationTest, PANEL_13_cButtonPrint_5,ATTR_LABEL_TEXT,"测试完毕,可重新启动");
+			SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_5,ATTR_ENABLED,1);
+			
+			SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_4,ATTR_ENABLED,0);
 			break;
 	}
 	return 0;
@@ -235,14 +285,23 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 				        sprintf(sTxt,"正在测试第%d滑道间绝缘电阻",giCurrentInsulationChan);
 				        SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
 						
-				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2))&&(irstep<=5)  )
+				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2)||(giChanResSel[giCurrentInsulationChan-1]==3)))
 				        {
-			                IRSlipRelationTest(giCurrentInsulationChan,0);
+				           sprintf(sTxt,"正在测试第%d滑道间绝缘电阻",giCurrentInsulationChan);
+				           SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+						   IRSlipRelationTest(giCurrentInsulationChan,0);
+						   if((irstep>=6))
+						   {
+							  giCurrentInsulationChan++; 
+							  irstep=1;
+						   }
 				        }
 				        else
 				        {
-					        irstep=1;
-				            giCurrentInsulationChan++;	 
+				           sprintf(sTxt,"第%d滑道间不需绝缘电阻",giCurrentInsulationChan);
+				           SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+					       irstep=1;
+				           giCurrentInsulationChan++;	 
 				        }
 				   }
 				   else
@@ -256,17 +315,32 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 				}
 				else
 				{
-					if(giCurrentInsulationChan<38)
+					if(giCurrentInsulationChan<38)						
 				   {
-				        sprintf(sTxt,"正在测试第%d滑道间绝缘电阻",giCurrentInsulationChan);
-				        SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
 						
-				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2))&&(irstep<=5)  )
+				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2)) )
 				        {
-			                IRSlipRelationTest(giCurrentInsulationChan,1);
+				          sprintf(sTxt,"正在测试第%d滑道对地绝缘电阻",giCurrentInsulationChan);
+				          SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+			              IRSlipRelationTest(giCurrentInsulationChan,1);
+						  if(irstep>=6)									 
+						  {
+							irstep=1;
+							giCurrentInsulationChan++;
+						  }
 				        }
+						else if(giChanResSel[giCurrentInsulationChan-1]==3)
+						{
+				          sprintf(sTxt,"第%d滑道对地,无须测试绝缘电阻",giCurrentInsulationChan);
+				          SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+					      irstep=1;
+				          giCurrentInsulationChan++;	 
+						}
 				        else
 				        {
+				          sprintf(sTxt,"第%d滑道无须测试对地绝缘电阻",giCurrentInsulationChan);
+				          SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+						  
 					        irstep=1;
 				            giCurrentInsulationChan++;	 
 				        }

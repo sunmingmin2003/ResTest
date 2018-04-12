@@ -30,20 +30,31 @@ int CVICALLBACK OnTable (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_LEFT_CLICK_UP:
-			 GetActiveTableCell(panel, control, &MyPoint);
-			 GetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, &iColor);
-			 iTmp = MyPoint.y; 
-			 for(i=0;i<4;i++)
 			 {
-				MyPoint.y = i+1; 
-				SetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+			    GetActiveTableCell(panel, control, &MyPoint);
+			    GetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, &iColor);
+			    iTmp = MyPoint.y; 
+				
+				if(iTmp!=4)
+				{
+			      for(i=0;i<3;i++)
+			        {
+				      MyPoint.y = i+1; 
+				      SetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+			        }
+				
+			      MyPoint.y=iTmp;   			 
+			      if(iColor==VAL_GREEN)
+				    SetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+			      else
+				   SetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_GREEN);
+				}
+	         }
+			 break;
+       case EVENT_LEFT_DOUBLE_CLICK:
+			 {
 			 }
-			 MyPoint.y=iTmp;   			 
-			 if(iColor==VAL_GREEN)
-				 SetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
-			 else
-				 SetTableCellAttribute (panel, control, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_GREEN);
-			break;
+			 break;
 	}
 	return 0;
 }
@@ -99,6 +110,7 @@ int CVICALLBACK PANEL_16_SaveCFG (int panel, int control, int event,
 								  void *callbackData, int eventData1, int eventData2)
 {
 	char strFilePath[260];
+	char strTmp[60][10];
 	int i,j, iColor;
 	Point MyPoint;
 	/*double*/int iTmp;
@@ -112,7 +124,7 @@ int CVICALLBACK PANEL_16_SaveCFG (int panel, int control, int event,
 			for(i=0;i<30;i++)
 			{
 				MyPoint.x = i+1;
-				for(j=0;j<4;j++)
+				for(j=0;j<3;j++)
 				{
 					MyPoint.y = j+1;
 					GetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE, MyPoint, ATTR_CMD_BUTTON_COLOR, &iColor); 
@@ -124,12 +136,14 @@ int CVICALLBACK PANEL_16_SaveCFG (int panel, int control, int event,
 					else 
 						giChanResSel[i] = 0;
 				}
+			   MyPoint.y=4;
+			   	GetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE, MyPoint, ATTR_CTRL_VAL, strTmp[i]);
 			}
 //保存后30组数据--------------------------------------
 			for(i=0;i<30;i++)
 			{
 				MyPoint.x = i+1;
-				for(j=0;j<4;j++)
+				for(j=0;j<3;j++)
 				{
 					MyPoint.y = j+1;
 					GetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE_2, MyPoint, ATTR_CMD_BUTTON_COLOR, &iColor); 
@@ -141,36 +155,38 @@ int CVICALLBACK PANEL_16_SaveCFG (int panel, int control, int event,
 					else 
 						giChanResSel[30+i] = 0;
 				}
+			    MyPoint.y=4;
+				GetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE_2, MyPoint, ATTR_CTRL_VAL, strTmp[30+i]); 
 			}
 //保存4个阈值--------------------------------------  
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC, &iTmp);
 			giChanResSel[60] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_2, &iTmp);
 			giChanResSel[61] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3, &iTmp);
 			giChanResSel[62] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4, &iTmp);
 			giChanResSel[63] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_5, &iTmp);
 			giChanResSel[64] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_6, &iTmp);
 			giChanResSel[65] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7, &iTmp);
 			giChanResSel[66] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8, &iTmp);
 			giChanResSel[67] = iTmp;
 			
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_9, &iTmp);
 			giChanResSel[68] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_10, &iTmp);
 			giChanResSel[69] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11, &iTmp);
 			giChanResSel[70] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12, &iTmp);
 			giChanResSel[71] = iTmp;			
 			
 			i = ArrayToFile (strFilePath, giChanResSel, VAL_INTEGER, 72, 1, VAL_GROUPS_TOGETHER, VAL_GROUPS_AS_COLUMNS, VAL_CONST_WIDTH, 10, VAL_ASCII, VAL_TRUNCATE);
-			
+				ArrayToFile (strFilePath, strTmp, VAL_CHAR, 60, 10, VAL_GROUPS_TOGETHER, VAL_GROUPS_AS_COLUMNS, VAL_CONST_WIDTH, 10, VAL_ASCII, VAL_APPEND);
 			if(i==0)
 				MessagePopup("信息提示","配置保存成功！");
 
@@ -193,12 +209,12 @@ int CVICALLBACK PANEL_16_LoadCFG (int panel, int control, int event,
 			if(i==0)
 				return 0;
 			FileToArray (strFilePath, giChanResSel, VAL_INTEGER, 72, 1, VAL_GROUPS_TOGETHER, VAL_GROUPS_AS_COLUMNS, VAL_ASCII);
-			
+			FileToArray (strFilePath, giChanDesp,   VAL_CHAR,    72, 60,VAL_GROUPS_TOGETHER, VAL_GROUPS_AS_COLUMNS, VAL_ASCII); 
 //设置前30组数据--------------------------------------			
 			for(i=0;i<30;i++)
 			{
 				MyPoint.x = i+1;
-				for(j=0;j<4;j++)
+				for(j=0;j<3/*4*/;j++)
 				{
 					MyPoint.y = j+1;
 					SetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_WHITE); 
@@ -210,7 +226,7 @@ int CVICALLBACK PANEL_16_LoadCFG (int panel, int control, int event,
 			for(i=0;i<30;i++)
 			{
 				MyPoint.x = i+1;
-				for(j=0;j<4;j++)
+				for(j=0;j<3/*4*/;j++)
 				{
 					MyPoint.y = j+1;
 					SetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE_2, MyPoint, ATTR_CMD_BUTTON_COLOR, VAL_WHITE); 
@@ -221,16 +237,16 @@ int CVICALLBACK PANEL_16_LoadCFG (int panel, int control, int event,
 //保存4个阈值--------------------------------------  
 			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC,  giChanResSel[60]);
 			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_2,giChanResSel[61]);
-			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3,giChanResSel[62]);
-			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4,giChanResSel[63]);
+		//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3,giChanResSel[62]);
+		//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4,giChanResSel[63]);
 			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_5,giChanResSel[64]);
 			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_6,giChanResSel[65]);
-			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7,giChanResSel[66]);
-			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8,giChanResSel[67]);
+		//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7,giChanResSel[66]);
+		//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8,giChanResSel[67]);
 			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_9,giChanResSel[68]);
 			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_10,giChanResSel[69]);
-			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11,giChanResSel[70]);
-			SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12,giChanResSel[71]);				
+		//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11,giChanResSel[70]);
+		//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12,giChanResSel[71]);				
 			break;
 	}
 	
@@ -251,7 +267,7 @@ int CVICALLBACK PANEL_16_Set (int panel, int control, int event,
 			for(i=0;i<30;i++)
 			{
 				MyPoint.x = i+1;
-				for(j=0;j<4;j++)
+				for(j=0;j<3/*4*/;j++)
 				{
 					MyPoint.y = j+1;
 					GetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE, MyPoint, ATTR_CMD_BUTTON_COLOR, &iColor); 
@@ -268,7 +284,7 @@ int CVICALLBACK PANEL_16_Set (int panel, int control, int event,
 			for(i=0;i<30;i++)
 			{
 				MyPoint.x = i+1;
-				for(j=0;j<4;j++)
+				for(j=0;j<3/*4*/;j++)
 				{
 					MyPoint.y = j+1;
 					GetTableCellAttribute (pH_ChanSel, PANEL_16_TABLE_2, MyPoint, ATTR_CMD_BUTTON_COLOR, &iColor); 
@@ -286,25 +302,25 @@ int CVICALLBACK PANEL_16_Set (int panel, int control, int event,
 			giChanResSel[60] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_2, &iTmp);
 			giChanResSel[61] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3, &iTmp);
 			giChanResSel[62] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4, &iTmp);
 			giChanResSel[63] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_5, &iTmp);
 			giChanResSel[64] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_6, &iTmp);
 			giChanResSel[65] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7, &iTmp);
 			giChanResSel[66] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8, &iTmp);
 			giChanResSel[67] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_9, &iTmp);
 			giChanResSel[68] = iTmp;
 			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_10, &iTmp);
 			giChanResSel[69] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11, &iTmp);
 			giChanResSel[70] = iTmp;
-			GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12, &iTmp);
+		//	GetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12, &iTmp);
 			giChanResSel[71] = iTmp;			
 			break;
 	}
@@ -347,16 +363,16 @@ void LoadChannelCfg(void)
 //保存4个阈值--------------------------------------  
 	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC,   giChanResSel[60]);
 	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_2, giChanResSel[61]);
-	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3, giChanResSel[62]);
-	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4, giChanResSel[63]);
+//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_3, giChanResSel[62]);
+//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_4, giChanResSel[63]);
 	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_5, giChanResSel[64]);
 	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_6, giChanResSel[65]);
-	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7, giChanResSel[66]);
-	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8, giChanResSel[67]);
+//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_7, giChanResSel[66]);
+//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_8, giChanResSel[67]);
 	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_9, giChanResSel[68]);
 	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_10, giChanResSel[69]);
-	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11, giChanResSel[70]);
-	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12, giChanResSel[71]);	
+//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_11, giChanResSel[70]);
+//	SetCtrlVal(pH_ChanSel, PANEL_16_NUMERIC_12, giChanResSel[71]);	
 }
 
 void SaveChannelCfg(void)

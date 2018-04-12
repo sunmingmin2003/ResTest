@@ -259,17 +259,27 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 			    {
 				    if(giCurrentHVChan<38)
 			        {
-				        sprintf(sTxt,"正在测试第%d滑道间耐压",giCurrentHVChan);
-				        SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
 				   
-				        if( ((giChanResSel[giCurrentHVChan-1]==1) || (giChanResSel[giCurrentHVChan-1]==2))&&(acwstep<=5)  )
+				        if( ((giChanResSel[giCurrentHVChan-1]==1) || (giChanResSel[giCurrentHVChan-1]==2)||(giChanResSel[giCurrentHVChan-1]==3))  )
 				        {
+				           sprintf(sTxt,"正在测试第%d滑道间耐压",giCurrentHVChan);
+				           SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+							
 			                ACWSlipRelationTest(giCurrentHVChan,0);
+							if(acwstep>=6)
+							{
+							    giCurrentHVChan++;
+								acwstep=1;	
+							}
 				        }
 				        else
 				        {
+				           sprintf(sTxt,"第%d滑道间不需要耐压测试",giCurrentHVChan);
+				           SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+							
 					        acwstep=1;
 				            giCurrentHVChan++;	 
+							break;
 				        }
 			        }
 			        else
@@ -284,18 +294,36 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 			    {
 				    if(giCurrentHVChan<38)
 			        {
-				        sprintf(sTxt,"正在测试第%d滑道对地耐压！",giCurrentHVChan);
-				        SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
 				   
-				        if( ((giChanResSel[giCurrentHVChan-1]==1) || (giChanResSel[giCurrentHVChan-1]==2))&&(acwstep<=5)  )
+				        if( ((giChanResSel[giCurrentHVChan-1]==1) || (giChanResSel[giCurrentHVChan-1]==2))  )
 				        {
-			               ACWSlipRelationTest(giCurrentHVChan,1);
+				          sprintf(sTxt,"正在测试第%d滑道对地耐压！",giCurrentHVChan);
+				          SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+							
+			              ACWSlipRelationTest(giCurrentHVChan,1);
+						  if(acwstep>=6)
+						  {
+							 acwstep=1;
+							 giCurrentHVChan++;
+						  }								
 				        }
-				        else
+				        else if(giChanResSel[giCurrentHVChan-1]==3)
 				        {
+				          sprintf(sTxt,"第%d滑道接地环,无须对地耐压测试！",giCurrentHVChan);
+				          SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+						 
 					       acwstep=1;
 				           giCurrentHVChan++;	 
 				       }
+					   else
+					   {
+				          sprintf(sTxt,"第%d滑道无须对地耐压测试！",giCurrentHVChan);
+				          SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+						 
+					       acwstep=1;
+				           giCurrentHVChan++;	 
+						   
+					   }
 			        }
 			        else
 			        {
