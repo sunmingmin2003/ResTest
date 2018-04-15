@@ -115,7 +115,7 @@ int CVICALLBACK PANEL_Table3 (int panel, int control, int event,
 			sprintf(sTxt, "滑道%d测试中", giCurrentRes);
 			SetCtrlAttribute (pH_HITest, PANEL_8_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt);
 			sprintf(sTxt, "滑道%d结果？", giCurrentRes);
-			SetCtrlAttribute (pH_HITest, PANEL_8_TEXTMSG_5, ATTR_CTRL_VAL, sTxt);
+	//		SetCtrlAttribute (pH_HITest, PANEL_8_TEXTMSG_5, ATTR_CTRL_VAL, sTxt);
 			
 			sprintf(gComBufT, "[M]>CU%d#", giCurrentRes-1);
 			i = SendComCMD(gComRLY, strlen(gComBufT), gComBufT);
@@ -138,11 +138,25 @@ int CVICALLBACK PANEL_8_Start_Test (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_COMMIT:
-			step = 1;  
-			giCurrentRes=1;
-			GetCtrlVal(pH_HITest,PANEL_8_NUMERIC,&fTestTime); 
-			ResetTimer(pH_HITest, PANEL_8_TIMER);
-			SetCtrlAttribute (pH_HITest, PANEL_8_TIMER, ATTR_ENABLED, 1);   
+	         for(i=0;i<7;i++)  // mmsun
+	         {   // 7路动力滑道，双击某一滑道，启动该滑道测量 
+		        if(/* (giChanResSel[i]!=1) && */(giChanResSel[i]==1) )
+			        SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+		        else 			
+			        SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_LT_GRAY);
+	         }
+	         for(i=0;i<7;i++)   //mmsun
+	         {   // 7路动力滑道，测试结果 
+		        if( /*(giChanResSel[i]!=1) &&*/ (giChanResSel[i]==1) )
+			        SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		        else 
+			        SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, 0x00F0F0F0);   
+			 }
+			 step = 1;  
+		 	 giCurrentRes=1;
+			 GetCtrlVal(pH_HITest,PANEL_8_NUMERIC,&fTestTime); 
+		 	 ResetTimer(pH_HITest, PANEL_8_TIMER);
+		 	 SetCtrlAttribute (pH_HITest, PANEL_8_TIMER, ATTR_ENABLED, 1);   
 			
 			/*
 			gComBufT[0] = 0x05;
@@ -327,7 +341,7 @@ int CVICALLBACK PANEL_8_Progress (int panel, int control, int event,
 				if((giChanResSel[giCurrentRes-1]==1))
 			    {
 				   sprintf(sTxt,"正在测试第%d滑道大电流",giCurrentRes);
-				   SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
+				   SetCtrlAttribute (pH_HITest, PANEL_8_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 			       ChannlHiCurTest(giCurrentRes);
 				   if((step >=6))
 				   {
@@ -341,12 +355,12 @@ int CVICALLBACK PANEL_8_Progress (int panel, int control, int event,
 					if(giChanResSel[giCurrentRes-1]==3)
 					{
 				      sprintf(sTxt,"第%d滑道是接地环,跳过",giCurrentRes);
-				      SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
+				      SetCtrlAttribute (pH_HITest, PANEL_8_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 					}
 					else if((giChanResSel[giCurrentRes-1]==0)||(giChanResSel[giCurrentRes-1]==2))
 					{
 				      sprintf(sTxt,"第%d滑道不需要测试,跳过",giCurrentRes);
-				      SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, sTxt); 
+				      SetCtrlAttribute (pH_HITest, PANEL_8_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 					  	
 					}
 					giCurrentRes++;
@@ -355,7 +369,7 @@ int CVICALLBACK PANEL_8_Progress (int panel, int control, int event,
 			  }
 			  else
 			  {
-				SetCtrlAttribute (pH_HITest, PANEL_8_COMMANDBUTTON_5, ATTR_LABEL_TEXT, "测试完毕可以重新启动"); 
+				SetCtrlAttribute (pH_HITest, PANEL_8_NUMERICSLIDE, ATTR_LABEL_TEXT, "测试完毕可以重新启动"); 
 			    ResetTimer(pH_HITest, PANEL_8_TIMER);
 			    SetCtrlAttribute (pH_HITest, PANEL_8_TIMER, ATTR_ENABLED, 0);   
 			  }
@@ -393,11 +407,12 @@ int ChannlHiCurTest(int Channel)
 {
 	double fProgress,fTime;
     int iCurrent;  
-	
+	int iColor;
 	switch(step)
 	{
 		case 1: //close relay
 			{
+			  SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_YELLOW); 
 			  SetCurrent();
 			  CloseHIRelay(Channel-1);
 			  step =2;
@@ -444,6 +459,10 @@ int ChannlHiCurTest(int Channel)
 			{
 			   OpenHIRelay();
 			   step = 6;
+			   SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_4, MakePoint(Channel,1), ATTR_CTRL_VAL, "Y");
+			  // GetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, &iColor);
+			   //SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, (iColor==VAL_YELLOW)?VAL_GREEN:VAL_YELLOW); 
+			  SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_GREEN); 
 			}
 			break;
 	}

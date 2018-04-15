@@ -465,7 +465,7 @@ int CVICALLBACK PANEL_7_Auto_GND_Start (int panel, int control, int event,
 {
 	switch (event)
 	{
-		case EVENT_COMMIT:
+		case EVENT_COMMIT: 
 			GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_HV1_1,&fHiVolt1);
 	        GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_HC1_1,&fHiCurrt1); 
 	        GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_LC1_1,&fLiCurrt1); 
@@ -480,7 +480,9 @@ int CVICALLBACK PANEL_7_Auto_GND_Start (int panel, int control, int event,
 			SetCtrlAttribute (pH_HVTest, PANEL_7_TIMER, ATTR_ENABLED, 1); 
 			giCurrentHVChan=1;  
 			flag = 1;
-			gHVGNDSel = 1;
+			gHVGNDSel = 1;		 
+		//	CloseHiRelay(19,1);
+			
 			break;
 	}
 	return 0;
@@ -501,11 +503,13 @@ int CVICALLBACK PANEL_7_Auto_GND_Start (int panel, int control, int event,
 int ACWSlipRelationTest(int Channel,int flag)
 {   int i;
     char strTmp[10];
+	double fProgress;
 	switch(acwstep)
 	{
 		case 1:
 			{
 			  OpenRelay();
+			 // SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE,0);
 			  if(Channel>7)
 			  {
 			    SetInstruct("MAIN:","FUNC ","MANU","");    //Switch to MANU Mode
@@ -553,10 +557,26 @@ int ACWSlipRelationTest(int Channel,int flag)
 			}
 		case 4:
 			{
+			  if(Channel>7) 
+			  {
+			    GetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE, &fProgress);
+			    GetCtrlVal(pH_HVTest, PANEL_7_NUMERIC_TIME1_2, &fTestTime2);   //每个滑道测试时间     
+			    SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE, ((fProgress+1.0/fTestTime2)>1)?1:(fProgress+1.0/fTestTime2) ); 
+			  }
+			  else
+			  {
+			    GetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE, &fProgress);
+			    GetCtrlVal(pH_HVTest, PANEL_7_NUMERIC_TIME1_1, &fTestTime1);   //每个滑道测试时间     
+			    SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE, ((fProgress+1.0/fTestTime1)>1)?1:(fProgress+1.0/fTestTime1) ); 
+			  }
 			  QueryInstruct("FUNC:","TEST");
 			  i=FindPattern(gComBufR,0,-1,"OFF",0,0);
 			  if(i>0)
-			    acwstep=5;  
+			  {
+			    acwstep=5;
+		//		SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE,1);
+				
+			  }
 			  break;
 			}
 		case 5:

@@ -255,14 +255,13 @@
 #define  PANEL_8_COMMANDBUTTON_5          23      /* control type: command, callback function: PANEL_8_Start_Test */
 #define  PANEL_8_COMMANDBUTTON_4          24      /* control type: command, callback function: PANEL_8_Stop_Test */
 #define  PANEL_8_DECORATION               25      /* control type: deco, callback function: (none) */
-#define  PANEL_8_TEXTMSG_5                26      /* control type: textMsg, callback function: (none) */
-#define  PANEL_8_DECORATION_8             27      /* control type: deco, callback function: (none) */
-#define  PANEL_8_TEXTMSG_6                28      /* control type: textMsg, callback function: (none) */
-#define  PANEL_8_NUMERIC_2                29      /* control type: numeric, callback function: (none) */
-#define  PANEL_8_NUMERIC                  30      /* control type: numeric, callback function: (none) */
-#define  PANEL_8_PICTURE                  31      /* control type: picture, callback function: (none) */
-#define  PANEL_8_TEXTMSG_7                32      /* control type: textMsg, callback function: (none) */
-#define  PANEL_8_TIMER                    33      /* control type: timer, callback function: PANEL_8_Progress */
+#define  PANEL_8_DECORATION_8             26      /* control type: deco, callback function: (none) */
+#define  PANEL_8_TEXTMSG_6                27      /* control type: textMsg, callback function: (none) */
+#define  PANEL_8_NUMERIC_2                28      /* control type: numeric, callback function: (none) */
+#define  PANEL_8_NUMERIC                  29      /* control type: numeric, callback function: (none) */
+#define  PANEL_8_PICTURE                  30      /* control type: picture, callback function: (none) */
+#define  PANEL_8_TEXTMSG_7                31      /* control type: textMsg, callback function: (none) */
+#define  PANEL_8_TIMER                    32      /* control type: timer, callback function: PANEL_8_Progress */
 
 #define  PANEL_9                          14
 #define  PANEL_9_CHK_SaveDeviceInfo       2       /* control type: radioButton, callback function: (none) */

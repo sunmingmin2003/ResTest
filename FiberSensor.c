@@ -314,10 +314,10 @@ int main (int argc, char *argv[])
 		return -1;	
 
 	
-	pHMenu = GetPanelMenuBar(pH_HITest);
-	DisplayPanel (pH_HITest);
+	pHMenu = GetPanelMenuBar(panelHandle);
+	DisplayPanel (panelHandle);
 	//显示区域窗口大小设置
-	SetPanelAttribute (pH_HITest/*panelHandle*/, ATTR_WINDOW_ZOOM, VAL_MAXIMIZE);
+	SetPanelAttribute (panelHandle, ATTR_WINDOW_ZOOM, VAL_MAXIMIZE);
 	GetScreenSize (&giScreenHight, &giScreenWidth);
 	giGraphAreaWidth = giScreenWidth - _GRAPH_AREA_LEFT;
 	giGraphAreaHight = giScreenHight - _GRAPH_AREA_TOP - _MSG_AREA_HIGHT;
@@ -733,18 +733,18 @@ int CVICALLBACK PANEL_DAQ_START (int panel, int control, int event,
 	switch (event)
 	{
 		case EVENT_COMMIT:
-		//	sprintf(gComBufT, "[M]>RL1#");  //打开线阻继电器
-		//	i = SendComCMD(gComRLY,  strlen(gComBufT), gComBufT);
-		//	if(-2 ==i)
-		//		return -1;
-			Delay(1);
+			sprintf(gComBufT, "[M]>RL1#");  //打开线阻继电器
+			i = SendComCMD(gComRLY,  strlen(gComBufT), gComBufT);
+			if(-2 ==i)
+				return -1;
+			Delay(1);   /*
 			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量等"); 
 			Delay(1);
 			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量等");
 			Delay(1);
 			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量等"); 
 			Delay(1);  
-			
+				*/
 			giEnableDataRev = 1;    //启动数据刷新
 			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_TEXT, "开始测量");
 			SetCtrlAttribute (panelHandle, PANEL_cButtonStart, ATTR_LABEL_COLOR, VAL_BLACK);
@@ -910,7 +910,7 @@ void InitialDefaultCtrl(void)
 	//设置主面板的列数
 	for(i=0; i<60; i++)
 	{
-		if(giChanResSel[i]==1) // 信号通道
+		if((i < 7)&&((giChanResSel[i]==1)||(giChanResSel[i]==3))) // 动力通道
 		{   //PANEL_TABLE,主界面上，线阻测试table1 
 			InsertTableColumns (panelHandle, PANEL_TABLE, -1, 1, VAL_CELL_NUMERIC);//在表的末尾,插入1列 
 			GetNumTableColumns (panelHandle, PANEL_TABLE, &iTmp);  //获取列数
@@ -919,7 +919,7 @@ void InitialDefaultCtrl(void)
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE, iTmp, ATTR_LABEL_TEXT, sTmp);
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE, iTmp, ATTR_COLUMN_WIDTH, 38);
 		}
-		if(giChanResSel[i]==2) // 动力通道
+		else if((giChanResSel[i]==2)||(giChanResSel[i]==3)) // 信号通道
 		{    //PANEL_TABLE_2,主界面上，线阻测试table2
 			InsertTableColumns (panelHandle, PANEL_TABLE_2, -1, 1, VAL_CELL_NUMERIC);	 //主界面上，线阻测试table2 
 			GetNumTableColumns (panelHandle, PANEL_TABLE_2, &iTmp);
@@ -976,19 +976,19 @@ void InitialDefaultCtrl(void)
 	SetTableCellAttribute (pH_DeviceIP, PANEL_TABLE_9, MakePoint(1,2), ATTR_CTRL_VAL, giChanResSel[63]);//设定噪声阈值最大值 
 	SetTableCellAttribute (pH_DeviceIP, PANEL_TABLE_9, MakePoint(1,1), ATTR_CTRL_VAL, giChanResSel[67]);//设定噪声阈值最小值
 //设置大电流HI面板滑环的显示
-	for(i=0;i<6;i++)  // mmsun
-	{   // 40路动力滑道，双击某一滑道，启动该滑道测量 
-		if(/* (giChanResSel[i]!=1) && */(giChanResSel[i]!=2) )
-			SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_LT_GRAY);
-		else 			
+	for(i=0;i<7;i++)  // mmsun
+	{   // 7路动力滑道，双击某一滑道，启动该滑道测量 
+		if(/* (giChanResSel[i]!=1) && */(giChanResSel[i]==1) )
 			SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+		else 			
+			SetTableCellAttribute (pH_HITest, PANEL_8_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_LT_GRAY);
 	}
-	for(i=0;i<6;i++)   //mmsun
-	{   // 40路动力滑道，测试结果 
-		if( /*(giChanResSel[i]!=1) &&*/ (giChanResSel[i]!=2) )
-			SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, 0x00F0F0F0);
+	for(i=0;i<7;i++)   //mmsun
+	{   // 7路动力滑道，测试结果 
+		if( /*(giChanResSel[i]!=1) &&*/ (giChanResSel[i]==1) )
+			SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, VAL_WHITE);
 		else 
-			SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
+			SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,i+1,1,1), ATTR_TEXT_BGCOLOR, 0x00F0F0F0);   
 	}	
 	
 //设置HV面板滑环的显示
@@ -1047,9 +1047,9 @@ void SetAlarmDisplay(void)  //结果显示处理
 	char strTmp[256];
 	
 	SetTableCellValFromIndex (panelHandle, PANEL_TABLE_5, MakePoint(1,1), 0);  //设置合格与否
-	for(i=0;i<60;i++)
+	for(i=0;i<7;i++)
 	{
-		if(giChanResSel[i]==1)   //设置信号通道的上限值和下限值
+		if((giChanResSel[i]==1)||(giChanResSel[i]==3))   //设置信号通道的上限值和下限值
 		{
 			iTmp++;
 			MaxMin1D (gfChanResVal[i], gChanDataLen, &fMax, &iMaxIdx, &fMin, &iMinIdx);
@@ -1058,9 +1058,9 @@ void SetAlarmDisplay(void)  //结果显示处理
 		}
 	}
 	iTmp = 0;
-	for(i=0;i<60;i++)
+	for(i=7;i<60;i++)
 	{
-		if(giChanResSel[i]==2)   //设置动力通道的上限值和下限值
+		if((giChanResSel[i]==2)||(giChanResSel[i]==3))   //设置动力通道的上限值和下限值
 		{
 			iTmp++;
 			MaxMin1D (gfChanResVal[i], gChanDataLen, &fMax, &iMaxIdx, &fMin, &iMinIdx);
@@ -1079,7 +1079,7 @@ void SetAlarmDisplay(void)  //结果显示处理
 	{
 		iAlalrmNum = 0;
 		iTmp = giChanResSel[i];
-		if((iTmp==1)|| (iTmp==2))
+		if((iTmp==1)|| (iTmp==2)||(iTmp==3))
 		{
 			SetTableCellAttribute (panelHandle, PANEL_TABLE_4, MakePoint(i+1,1), ATTR_TEXT_BGCOLOR, 0x00F0F0F0);   			
 			SetTableCellAttribute (panelHandle, PANEL_TABLE_4, MakePoint(i+1,2), ATTR_TEXT_BGCOLOR, 0x00F0F0F0);  			
@@ -1117,12 +1117,12 @@ void SetAlarmDisplay(void)  //结果显示处理
 	for(i=0;i<60;i++) //噪声阈值是否超限
 	{
 		MaxMin1D (gfChanResVal[i], gChanDataLen, &fMax, &iMaxIdx, &fMin, &iMinIdx);  		
-		if(giChanResSel[i]==1) //动力环
+		if((i<7)&&((giChanResSel[i]==1)||(giChanResSel[i]==3))) //动力环
 		{
 			if( (fMax-fMin)>(giChanResSel[60] -giChanResSel[64]))
 				SetTableCellAttribute (panelHandle, PANEL_TABLE_4, MakePoint(i+1,2), ATTR_TEXT_BGCOLOR, VAL_RED);  	//噪声设置为红色				
 		}
-		else if(giChanResSel[i]==2)//信号环
+		else if((giChanResSel[i]==2)||(giChanResSel[i]==3))//信号环
 		{
 			if( (fMax-fMin)>(giChanResSel[61] -giChanResSel[65]))  
 				SetTableCellAttribute (panelHandle, PANEL_TABLE_4, MakePoint(i+1,2), ATTR_TEXT_BGCOLOR, VAL_RED);  	//				
