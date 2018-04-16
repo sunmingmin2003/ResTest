@@ -1,6 +1,5 @@
 /**************************************************************************/
 /* LabWindows/CVI User Interface Resource (UIR) Include File              */
-/* Copyright (c) National Instruments 2018. All Rights Reserved.          */
 /*                                                                        */
 /* WARNING: Do not add to, delete from, or otherwise modify the contents  */
 /*          of this include file.                                         */
@@ -15,47 +14,48 @@
      /* Panels and Controls: */
 
 #define  PANEL                            1
-#define  PANEL_cButtonStart               2       /* control type: command, callback function: PANEL_DAQ_START */
-#define  PANEL_TABLE_MSG                  3       /* control type: table, callback function: OnTABLE_MSG */
-#define  PANEL_cButtonPrint_3             4       /* control type: command, callback function: PANEL_Single_DAQ */
-#define  PANEL_cButtonPrint_2             5       /* control type: command, callback function: PANEL_Print */
-#define  PANEL_cButtonPrint               6       /* control type: command, callback function: PANEL_SaveScreen */
-#define  PANEL_cButtonStop                7       /* control type: command, callback function: PANEL_DAQ_STOP */
-#define  PANEL_TABLE_9                    8       /* control type: table, callback function: (none) */
-#define  PANEL_DECORATION_11              9       /* control type: deco, callback function: (none) */
-#define  PANEL_TABLE_8                    10      /* control type: table, callback function: (none) */
-#define  PANEL_cButtomQuit                11      /* control type: command, callback function: PANEL_Quit */
-#define  PANEL_DECORATION_8               12      /* control type: deco, callback function: (none) */
-#define  PANEL_DECORATION_6               13      /* control type: deco, callback function: (none) */
-#define  PANEL_DECORATION_9               14      /* control type: deco, callback function: (none) */
-#define  PANEL_DECORATION_7               15      /* control type: deco, callback function: (none) */
-#define  PANEL_PIC_Unconnect              16      /* control type: picture, callback function: (none) */
-#define  PANEL_PIC_Connect                17      /* control type: picture, callback function: (none) */
-#define  PANEL_TXT_NetStatus              18      /* control type: textMsg, callback function: (none) */
-#define  PANEL_TXT_NetStatus_2            19      /* control type: textMsg, callback function: (none) */
-#define  PANEL_PIC_ConnectGrey            20      /* control type: picture, callback function: (none) */
-#define  PANEL_TIMER_CMD_Process          21      /* control type: timer, callback function: PANEL_Timer_CMD_Process */
-#define  PANEL_LED_1                      22      /* control type: LED, callback function: (none) */
-#define  PANEL_LED                        23      /* control type: LED, callback function: (none) */
-#define  PANEL_TABLE_5                    24      /* control type: table, callback function: (none) */
-#define  PANEL_TABLE_4                    25      /* control type: table, callback function: (none) */
-#define  PANEL_TABLE_3                    26      /* control type: table, callback function: (none) */
-#define  PANEL_TABLE_2                    27      /* control type: table, callback function: (none) */
-#define  PANEL_TABLE                      28      /* control type: table, callback function: (none) */
-#define  PANEL_DECORATION_3               29      /* control type: deco, callback function: (none) */
-#define  PANEL_STRING                     30      /* control type: string, callback function: (none) */
-#define  PANEL_TEXTMSG_4                  31      /* control type: textMsg, callback function: (none) */
-#define  PANEL_TEXTMSG_3                  32      /* control type: textMsg, callback function: (none) */
-#define  PANEL_TEXTMSG_2                  33      /* control type: textMsg, callback function: (none) */
-#define  PANEL_TEXTMSG                    34      /* control type: textMsg, callback function: (none) */
-#define  PANEL_DECORATION_5               35      /* control type: deco, callback function: (none) */
-#define  PANEL_COMMANDBUTTON              36      /* control type: command, callback function: PANEL_DEL_ALARM */
-#define  PANEL_PICTURE                    37      /* control type: picture, callback function: (none) */
-#define  PANEL_TIMER_AutoConnect          38      /* control type: timer, callback function: PANEL_AutoConnect */
-#define  PANEL_TIMER_EnableRXD            39      /* control type: timer, callback function: PANEL_EnableRXD */
-#define  PANEL_TIMER_NetStatus            40      /* control type: timer, callback function: PANEL_NetStatus */
-#define  PANEL_DECORATION_10              41      /* control type: deco, callback function: (none) */
-#define  PANEL_PICTUREBUTTON              42      /* control type: pictButton, callback function: PANEL_HV_Test */
+#define  PANEL_cButtonCloseRelay          2       /* control type: command, callback function: PANEL_DAQ_CloseRelay */
+#define  PANEL_cButtonStart               3       /* control type: command, callback function: PANEL_DAQ_START */
+#define  PANEL_TABLE_MSG                  4       /* control type: table, callback function: OnTABLE_MSG */
+#define  PANEL_cButtonPrint_3             5       /* control type: command, callback function: PANEL_Single_DAQ */
+#define  PANEL_cButtonPrint_2             6       /* control type: command, callback function: PANEL_Print */
+#define  PANEL_cButtonPrint               7       /* control type: command, callback function: PANEL_SaveScreen */
+#define  PANEL_cButtonStop                8       /* control type: command, callback function: PANEL_DAQ_STOP */
+#define  PANEL_TABLE_9                    9       /* control type: table, callback function: (none) */
+#define  PANEL_DECORATION_11              10      /* control type: deco, callback function: (none) */
+#define  PANEL_TABLE_8                    11      /* control type: table, callback function: (none) */
+#define  PANEL_cButtomQuit                12      /* control type: command, callback function: PANEL_Quit */
+#define  PANEL_DECORATION_8               13      /* control type: deco, callback function: (none) */
+#define  PANEL_DECORATION_6               14      /* control type: deco, callback function: (none) */
+#define  PANEL_DECORATION_9               15      /* control type: deco, callback function: (none) */
+#define  PANEL_DECORATION_7               16      /* control type: deco, callback function: (none) */
+#define  PANEL_PIC_Unconnect              17      /* control type: picture, callback function: (none) */
+#define  PANEL_PIC_Connect                18      /* control type: picture, callback function: (none) */
+#define  PANEL_TXT_NetStatus              19      /* control type: textMsg, callback function: (none) */
+#define  PANEL_TXT_NetStatus_2            20      /* control type: textMsg, callback function: (none) */
+#define  PANEL_PIC_ConnectGrey            21      /* control type: picture, callback function: (none) */
+#define  PANEL_TIMER_CMD_Process          22      /* control type: timer, callback function: PANEL_Timer_CMD_Process */
+#define  PANEL_LED_1                      23      /* control type: LED, callback function: (none) */
+#define  PANEL_LED                        24      /* control type: LED, callback function: (none) */
+#define  PANEL_TABLE_5                    25      /* control type: table, callback function: (none) */
+#define  PANEL_TABLE_4                    26      /* control type: table, callback function: (none) */
+#define  PANEL_TABLE_3                    27      /* control type: table, callback function: (none) */
+#define  PANEL_TABLE_2                    28      /* control type: table, callback function: (none) */
+#define  PANEL_TABLE                      29      /* control type: table, callback function: (none) */
+#define  PANEL_DECORATION_3               30      /* control type: deco, callback function: (none) */
+#define  PANEL_STRING                     31      /* control type: string, callback function: (none) */
+#define  PANEL_TEXTMSG_4                  32      /* control type: textMsg, callback function: (none) */
+#define  PANEL_TEXTMSG_3                  33      /* control type: textMsg, callback function: (none) */
+#define  PANEL_TEXTMSG_2                  34      /* control type: textMsg, callback function: (none) */
+#define  PANEL_TEXTMSG                    35      /* control type: textMsg, callback function: (none) */
+#define  PANEL_DECORATION_5               36      /* control type: deco, callback function: (none) */
+#define  PANEL_COMMANDBUTTON              37      /* control type: command, callback function: PANEL_DEL_ALARM */
+#define  PANEL_PICTURE                    38      /* control type: picture, callback function: (none) */
+#define  PANEL_TIMER_AutoConnect          39      /* control type: timer, callback function: PANEL_AutoConnect */
+#define  PANEL_TIMER_EnableRXD            40      /* control type: timer, callback function: PANEL_EnableRXD */
+#define  PANEL_TIMER_NetStatus            41      /* control type: timer, callback function: PANEL_NetStatus */
+#define  PANEL_DECORATION_10              42      /* control type: deco, callback function: (none) */
+#define  PANEL_PICTUREBUTTON              43      /* control type: pictButton, callback function: PANEL_HV_Test */
 
 #define  PANEL_10                         2
 #define  PANEL_10_BTNQuit                 2       /* control type: command, callback function: PANEL_10_OnBTNQuit */
@@ -95,9 +95,9 @@
 #define  PANEL_12_COMMANDBUTTON           3       /* control type: command, callback function: PANEL_12_Quit */
 
 #define  PANEL_13                         5
-#define  PANEL_13_TABLE_6                 2       /* control type: table, callback function: PANEL_7_SetResult */
-#define  PANEL_13_TABLE_5                 3       /* control type: table, callback function: (none) */
-#define  PANEL_13_TABLE_4                 4       /* control type: table, callback function: (none) */
+#define  PANEL_13_TABLE_4                 2       /* control type: table, callback function: PANEL_7_SetResult */
+#define  PANEL_13_TABLE_6                 3       /* control type: table, callback function: (none) */
+#define  PANEL_13_TABLE_5                 4       /* control type: table, callback function: (none) */
 #define  PANEL_13_PICTUREBUTTON_2         5       /* control type: pictButton, callback function: PANEL_13_PreTest */
 #define  PANEL_13_PICTUREBUTTON           6       /* control type: pictButton, callback function: PANEL_13_Res_Test */
 #define  PANEL_13_cButtonPrint_2          7       /* control type: command, callback function: PANEL_Print */
@@ -363,6 +363,7 @@ int  CVICALLBACK PANEL_9_ButtomQuit(int panel, int control, int event, void *cal
 int  CVICALLBACK PANEL_9_SetSaveDir(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);
 int  CVICALLBACK PANEL_AutoConnect(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);
 int  CVICALLBACK PANEL_BTNScale(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);
+int  CVICALLBACK PANEL_DAQ_CloseRelay(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);
 int  CVICALLBACK PANEL_DAQ_START(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);
 int  CVICALLBACK PANEL_DAQ_STOP(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);
 int  CVICALLBACK PANEL_DEL_ALARM(int panel, int control, int event, void *callbackData, int eventData1, int eventData2);

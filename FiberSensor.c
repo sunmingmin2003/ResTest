@@ -789,6 +789,8 @@ int CVICALLBACK PANEL_Print (int panel, int control, int event,
 			InstallPopup (pH_DeviceIP);  
 			SetPanelAttribute (pH_DeviceIP, ATTR_WINDOW_ZOOM, VAL_MAXIMIZE); 
 			GetNumTableColumns(panelHandle, PANEL_TABLE, &iTmp);
+		//	DuplicateCtrl (panelHandle, PANEL_TABLE, pH_DeviceIP, "线阻测试结果", 50, 20); 
+			
 			for(i=0;i<iTmp;i++)
 			{
 				MyPoint.x = i+1;
@@ -854,8 +856,8 @@ int CVICALLBACK PANEL_Print (int panel, int control, int event,
 //复制电流测试控件
 			DuplicateCtrl (pH_HITest, PANEL_8_TABLE_4, pH_DeviceIP, "大电流测试结果", 350, 20);
 			DuplicateCtrl (pH_HVTest, PANEL_7_TABLE_4, pH_DeviceIP, "耐压测试结果", 480, 20);  	
-			DuplicateCtrl (pH_InsulationTest, PANEL_13_TABLE_4, pH_DeviceIP, "绝缘仪测试结果", 660, 20);  				
-			DuplicateCtrl (pH_InsulationTest, PANEL_13_TABLE_5, pH_DeviceIP, "", 740, 20);  				
+			DuplicateCtrl (pH_InsulationTest, PANEL_13_TABLE_6, pH_DeviceIP, "绝缘仪测试结果", 660, 20);  				
+		//	DuplicateCtrl (pH_InsulationTest, PANEL_13_TABLE_5, pH_DeviceIP, "", 740, 20);  				
 			
 			break;
 	}
@@ -918,6 +920,16 @@ void InitialDefaultCtrl(void)
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE, iTmp, ATTR_USE_LABEL_TEXT, 1); // 1 = Use custom text as label   
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE, iTmp, ATTR_LABEL_TEXT, sTmp);
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE, iTmp, ATTR_COLUMN_WIDTH, 38);
+			
+			InsertTableColumns (pH_DeviceIP, PANEL_11_TABLE, -1, 1, VAL_CELL_NUMERIC);//在表的末尾,插入1列 
+			GetNumTableColumns (pH_DeviceIP, PANEL_11_TABLE, &iTmp);  //获取列数
+			sprintf(sTmp, "%d", i+1);
+			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE, iTmp, ATTR_USE_LABEL_TEXT, 1); // 1 = Use custom text as label   
+			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE, iTmp, ATTR_LABEL_TEXT, sTmp);
+			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE, iTmp, ATTR_COLUMN_WIDTH, 38);
+			
+			
+			
 		}
 		else if((giChanResSel[i]==2)||(giChanResSel[i]==3)) // 信号通道
 		{    //PANEL_TABLE_2,主界面上，线阻测试table2
@@ -926,11 +938,19 @@ void InitialDefaultCtrl(void)
 			sprintf(sTmp, "%d", i+1);
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE_2, iTmp, ATTR_USE_LABEL_TEXT, 1);// 1 = Use custom text as label   			
 			SetTableColumnAttribute (panelHandle, PANEL_TABLE_2, iTmp, ATTR_LABEL_TEXT, sTmp);
-			SetTableColumnAttribute (panelHandle, PANEL_TABLE_2, iTmp, ATTR_COLUMN_WIDTH, 38);  			
+			SetTableColumnAttribute (panelHandle, PANEL_TABLE_2, iTmp, ATTR_COLUMN_WIDTH, 38);  		
+			
+			InsertTableColumns (pH_DeviceIP, PANEL_11_TABLE_2, -1, 1, VAL_CELL_NUMERIC);	 //主界面上，线阻测试table2 
+			GetNumTableColumns (pH_DeviceIP, PANEL_11_TABLE_2, &iTmp);
+			sprintf(sTmp, "%d", i+1);
+			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE_2, iTmp, ATTR_USE_LABEL_TEXT, 1);// 1 = Use custom text as label   			
+			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE_2, iTmp, ATTR_LABEL_TEXT, sTmp);
+			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE_2, iTmp, ATTR_COLUMN_WIDTH, 38);  			
+			
 		}		
 	}
 //设置打印面板的列数	
-	for(i=0; i<60; i++)
+/*	for(i=0; i<60; i++)
 	{
 		if(giChanResSel[i]==1)
 		{
@@ -950,7 +970,7 @@ void InitialDefaultCtrl(void)
 			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE_2, iTmp, ATTR_LABEL_TEXT, sTmp);
 			SetTableColumnAttribute (pH_DeviceIP, PANEL_11_TABLE_2, iTmp, ATTR_COLUMN_WIDTH, 40);  			
 		}		
-	}	
+	}	*/
 	
 	for(i=0;i<60;i++)
 	{   //显示滑道阻值
@@ -994,22 +1014,58 @@ void InitialDefaultCtrl(void)
 //设置HV面板滑环的显示
 	for(i=0;i<40;i++)
 	{   //40路
-		if( (giChanResSel[i]!=1) && (giChanResSel[i]!=2) )
-			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_LT_GRAY);
+		if( (giChanResSel[i]==1) || (giChanResSel[i]==2) || (giChanResSel[i]==3) )
+		{	
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+		   
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
+		   
+		   if(i<20)
+		   {
+			 SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		     SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_5, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-"); 
+			 SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_5, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");  
+		   }
+		   else
+		   {
+			 SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		     SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_6, MakePoint(i+1-20,1 ), ATTR_CTRL_VAL, "-"); 
+			 SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_6, MakePoint(i+1-20,2 ), ATTR_CTRL_VAL, "-");  
+			   
+		   }
+		}
 		else 			
-			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
-	}
-	for(i=0;i<40;i++)
-	{
-		if( (giChanResSel[i]!=1) && (giChanResSel[i]!=2) )
-			SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);
-		else 
-		{
-			SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
-			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
-			SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
+		{	
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR,VAL_LT_GRAY );
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);   
+		   
+		   if(i<20)
+		   {
+			  SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);  
+		   }
+		   else
+		   {
+			  SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY); 
+		   }
 		}
 	}
+	/*
+	for(i=0;i<40;i++)
+	{
+		if( (giChanResSel[i]==1) || (giChanResSel[i]==2)|| (giChanResSel[i]==3))
+		{	
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
+		}
+		else 
+		{
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);
+		}
+	}
+	*/
 //设置Insulation面板	
 	for(i=0;i<40;i++)
 	{
@@ -1018,7 +1074,8 @@ void InitialDefaultCtrl(void)
 		else 			
 			SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
 	}
-	
+
+	/*
 	for(i=0;i<20;i++)
 	{
 		if( (giChanResSel[i]!=1) && (giChanResSel[i]!=2) )
@@ -1033,7 +1090,7 @@ void InitialDefaultCtrl(void)
 		else 
 			SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
 	}	
-	
+*/	
 }
 
 void SetAlarmDisplay(void)  //结果显示处理
@@ -1285,6 +1342,24 @@ int CVICALLBACK PANEL_11_Save_Result (int panel, int control, int event,
 			sprintf(strFileName,"%s%s-%s.bmp", "D:\\Host1\\", strYMDName, strHMSName); 			
 			SavePanelDisplayToFile (panel, 0, VAL_ENTIRE_OBJECT, -1, -1, strFileName);
 			InsertTableMsg("数据保存完毕！", strFileName);
+			break;
+	}
+	return 0;
+}
+
+int CVICALLBACK PANEL_DAQ_CloseRelay (int panel, int control, int event,
+									  void *callbackData, int eventData1, int eventData2)
+{
+	int i;
+	switch (event)
+	{
+		case EVENT_COMMIT:
+			sprintf(gComBufT, "[M]>RL1#");  //打开线阻继电器
+			i = SendComCMD(gComRLY,  strlen(gComBufT), gComBufT);
+			if(-2 ==i)
+				return -1;
+			
+
 			break;
 	}
 	return 0;

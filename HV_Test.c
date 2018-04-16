@@ -221,10 +221,51 @@ int CVICALLBACK PANEL_7_Set_HV (int panel, int control, int event,
 int CVICALLBACK PANEL_7_Auto_Start (int panel, int control, int event,
 									void *callbackData, int eventData1, int eventData2)
 {
+	int i;
 
 	switch (event)
 	{
 		case EVENT_COMMIT:
+	for(i=0;i<40;i++)
+	{   //40路
+		if( (giChanResSel[i]==1) || (giChanResSel[i]==2) || (giChanResSel[i]==3) )
+		{	
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+		   
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
+		//   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
+		   
+		   if(i<20)
+		   {
+			 SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		     SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_5, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-"); 
+			 //SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_5, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");  
+		   }
+		   else
+		   {
+			 SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		     SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_6, MakePoint(i+1-20,1 ), ATTR_CTRL_VAL, "-"); 
+			 //SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_6, MakePoint(i+1-20,2 ), ATTR_CTRL_VAL, "-");  
+			   
+		   }
+		}
+		else 			
+		{	
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR,VAL_LT_GRAY );
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);   
+		   
+		   if(i<20)
+		   {
+			  SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);  
+		   }
+		   else
+		   {
+			  SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY); 
+		   }
+		}
+	}
+			
 			GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_HV1_1,&fHiVolt1);
 	        GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_HC1_1,&fHiCurrt1); 
 	        GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_LC1_1,&fLiCurrt1); 
@@ -263,7 +304,7 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 				        if( ((giChanResSel[giCurrentHVChan-1]==1) || (giChanResSel[giCurrentHVChan-1]==2)||(giChanResSel[giCurrentHVChan-1]==3))  )
 				        {
 				           sprintf(sTxt,"正在测试第%d滑道间耐压",giCurrentHVChan);
-				           SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+				           SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_3*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 							
 			                ACWSlipRelationTest(giCurrentHVChan,0);
 							if(acwstep>=6)
@@ -275,7 +316,7 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 				        else
 				        {
 				           sprintf(sTxt,"第%d滑道间不需要耐压测试",giCurrentHVChan);
-				           SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+				           SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_3*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 							
 					        acwstep=1;
 				            giCurrentHVChan++;	 
@@ -285,7 +326,7 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 			        else
 			        {
 				       giCurrentHVChan=1;
-				       SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_3, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
+				       SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_3*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
 			           SetCtrlAttribute (pH_HVTest, PANEL_7_TIMER, ATTR_INTERVAL, 1.0);
 			           SetCtrlAttribute (pH_HVTest, PANEL_7_TIMER, ATTR_ENABLED, 0); //disable timer	
 				    }
@@ -298,7 +339,7 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 				        if( ((giChanResSel[giCurrentHVChan-1]==1) || (giChanResSel[giCurrentHVChan-1]==2))  )
 				        {
 				          sprintf(sTxt,"正在测试第%d滑道对地耐压！",giCurrentHVChan);
-				          SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+				          SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_5*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 							
 			              ACWSlipRelationTest(giCurrentHVChan,1);
 						  if(acwstep>=6)
@@ -310,7 +351,7 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 				        else if(giChanResSel[giCurrentHVChan-1]==3)
 				        {
 				          sprintf(sTxt,"第%d滑道接地环,无须对地耐压测试！",giCurrentHVChan);
-				          SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+				          SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_5*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 						 
 					       acwstep=1;
 				           giCurrentHVChan++;	 
@@ -318,7 +359,7 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 					   else
 					   {
 				          sprintf(sTxt,"第%d滑道无须对地耐压测试！",giCurrentHVChan);
-				          SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+				          SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_5*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 						 
 					       acwstep=1;
 				           giCurrentHVChan++;	 
@@ -328,7 +369,7 @@ int CVICALLBACK PANEL_7_Auto_Test (int panel, int control, int event,
 			        else
 			        {
 				       giCurrentHVChan=1;
-				       SetCtrlAttribute (pH_HVTest, PANEL_7_cButtonPrint_5, ATTR_LABEL_TEXT, "滑道对地测试完毕，可重新启动");
+				       SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_5*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, "滑道对地测试完毕，可重新启动");
 			           SetCtrlAttribute (pH_HVTest, PANEL_7_TIMER, ATTR_INTERVAL, 1.0);
 			           SetCtrlAttribute (pH_HVTest, PANEL_7_TIMER, ATTR_ENABLED, 0); //disable timer	
 				    }		   
@@ -425,7 +466,8 @@ int CVICALLBACK PANEL_7_Stop_Test (int panel, int control, int event,
 					SetTableCellRangeAttribute (pH_HITest, PANEL_8_TABLE_4, MakeRect(1,j+1,1,1), ATTR_TEXT_BGCOLOR, VAL_WHITE); //大电流测试结果  
 			}
 			sprintf(gComBufT, "[M]!FW#");
-			SendComCMD(gComRLY, strlen(gComBufT), gComBufT);			
+			SendComCMD(gComRLY, strlen(gComBufT), gComBufT);
+			SetCtrlAttribute (pH_HVTest, /*PANEL_7_cButtonPrint_5*/PANEL_7_NUMERICSLIDE, ATTR_LABEL_TEXT, "已经停止，可重新启动");
 			break;
 	}
 	return 0;
@@ -462,10 +504,51 @@ int CVICALLBACK PANEL_7_SetResult (int panel, int control, int event,
 //自动测试滑道对地耐压
 int CVICALLBACK PANEL_7_Auto_GND_Start (int panel, int control, int event,
 										void *callbackData, int eventData1, int eventData2)
-{
+{   int i;
+
 	switch (event)
 	{
 		case EVENT_COMMIT: 
+	    for(i=0;i<40;i++)
+	{   //40路
+	 	if( (giChanResSel[i]==1) || (giChanResSel[i]==2) || (giChanResSel[i]==3) )
+		{	
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+		   
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
+		  // SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
+		   
+		   if(i<20)
+		   {
+			 SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		    // SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_5, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-"); 
+			 SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_5, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");  
+		   }
+		   else
+		   {
+			 SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		     //SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_6, MakePoint(i+1-20,1 ), ATTR_CTRL_VAL, "-"); 
+			 SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_6, MakePoint(i+1-20,2 ), ATTR_CTRL_VAL, "-");  
+			   
+		   }
+		}
+		else 			
+		{	
+		   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR,VAL_LT_GRAY );
+		   SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_4, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);   
+		   
+		   if(i<20)
+		   {
+			  SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);  
+		   }
+		   else
+		   {
+			  SetTableCellRangeAttribute (pH_HVTest, PANEL_7_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY); 
+		   }
+		}
+	}
+			
 			GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_HV1_1,&fHiVolt1);
 	        GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_HC1_1,&fHiCurrt1); 
 	        GetCtrlVal(pH_HVTest,PANEL_7_NUMERIC_LC1_1,&fLiCurrt1); 
@@ -508,8 +591,10 @@ int ACWSlipRelationTest(int Channel,int flag)
 	{
 		case 1:
 			{
+			  SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_YELLOW);  
 			  OpenRelay();
-			 // SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE,0);
+			  fProgress=0;
+			  SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE,fProgress);
 			  if(Channel>7)
 			  {
 			    SetInstruct("MAIN:","FUNC ","MANU","");    //Switch to MANU Mode
@@ -574,7 +659,8 @@ int ACWSlipRelationTest(int Channel,int flag)
 			  if(i>0)
 			  {
 			    acwstep=5;
-		//		SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE,1);
+				fProgress=1;
+				SetCtrlVal(pH_HVTest, PANEL_7_NUMERICSLIDE,fProgress);
 				
 			  }
 			  break;
@@ -603,14 +689,16 @@ int ACWSlipRelationTest(int Channel,int flag)
 				CurPoint.y=2;  
 			  }
 			  if(i>0)
-			    { 
-					
-				   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, CurPoint, ATTR_CTRL_VAL, "N");
-				}
+			  { 
+				SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_RED);  	
+				SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, CurPoint, ATTR_CTRL_VAL, "N");
+				   
+			  }
 			  else 
-			    {
-				   SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, CurPoint, ATTR_CTRL_VAL, "Y"); 	
-				}
+			  {
+				SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_GREEN);  
+				SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_4, CurPoint, ATTR_CTRL_VAL, "Y"); 	
+			  }
 			  if(Channel>20)
 			  {
 				CurPoint.x= Channel-20;
@@ -620,7 +708,6 @@ int ACWSlipRelationTest(int Channel,int flag)
 			  {
 				CurPoint.x= Channel;
 				SetTableCellAttribute (pH_HVTest, PANEL_7_TABLE_5, CurPoint, ATTR_CTRL_VAL, strTmp); 
-				
 			  }
 				
 			  acwstep=6;  
