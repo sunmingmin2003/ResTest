@@ -83,6 +83,46 @@ int CVICALLBACK PANEL_13_Start_Test (int panel, int control, int event,
 	{
 		case EVENT_COMMIT:
 		{  
+	       for(i=0;i<40;i++)
+	       {   //40路
+	   	      if( (giChanResSel[i]==1) || (giChanResSel[i]==2) || (giChanResSel[i]==3) )
+		      {	
+		         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+		   
+		         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
+		         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
+		         //SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
+		   
+		         if(i<20)
+		         {
+			         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		             SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-"); 
+			         //SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");  
+		         }
+		         else
+		         {
+			         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		             SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakePoint(i+1-20,1 ), ATTR_CTRL_VAL, "-"); 
+			         //SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakePoint(i+1-20,2 ), ATTR_CTRL_VAL, "-");  
+		         }
+		      }
+		      else 			
+		      {	
+		         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR,VAL_LT_GRAY );
+		         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);   
+		   
+		         if(i<20)
+		         {
+			        SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);  
+		         }
+		         else
+		         {
+			        SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY); 
+		         }
+		      }
+	       }
+		
+			/*
 		   CurPoint.y=1;
 		   
 		   for(i=1;i<=38;i++)
@@ -97,7 +137,7 @@ int CVICALLBACK PANEL_13_Start_Test (int panel, int control, int event,
 			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, "");
 			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, CurPoint, ATTR_CTRL_VAL, "");  
 		   }
-		   
+		   		*/
 		   GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HV,&fHiVolt);
 	       GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HRES,&iHiRes); 
 	       GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_LRES,&iLiRes); 
@@ -123,6 +163,46 @@ int CVICALLBACK PANEL_13_StartTestSec (int panel, int control, int event,
 	{
 		case EVENT_COMMIT:
 		{
+	       for(i=0;i<40;i++)
+	       {   //40路
+	   	      if( (giChanResSel[i]==1) || (giChanResSel[i]==2) || (giChanResSel[i]==3) )
+		      {	
+		         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR, VAL_WHITE);
+		   
+		         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);   
+		        // SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-");
+		         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");
+		   
+		         if(i<20)
+		         {
+			         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		             //SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakePoint(i+1,1 ), ATTR_CTRL_VAL, "-"); 
+			         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakePoint(i+1,2 ), ATTR_CTRL_VAL, "-");  
+		         }
+		         else
+		         {
+			         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_WHITE);
+		            // SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakePoint(i+1-20,1 ), ATTR_CTRL_VAL, "-"); 
+			         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakePoint(i+1-20,2 ), ATTR_CTRL_VAL, "-");  
+		         }
+		      }
+		      else 			
+		      {	
+		         SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(i+1,1), ATTR_CMD_BUTTON_COLOR,VAL_LT_GRAY );
+		         SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_4, MakeRect(1,i+1,2,1), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);   
+		   
+		         if(i<20)
+		         {
+			        SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_5, MakeRect(1,i+1,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY);  
+		         }
+		         else
+		         {
+			        SetTableCellRangeAttribute (pH_InsulationTest, PANEL_13_TABLE_6, MakeRect(1,i+1-20,1,2), ATTR_TEXT_BGCOLOR, VAL_LT_GRAY); 
+		         }
+		      }
+	       }
+			
+			/*
 		   CurPoint.y=2;
 		   
 		   for(i=1;i<=38;i++)
@@ -137,7 +217,7 @@ int CVICALLBACK PANEL_13_StartTestSec (int panel, int control, int event,
 			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, "");
 			 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, CurPoint, ATTR_CTRL_VAL, "");  
 		   }
-			
+		*/
 			GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HV,&fHiVolt);
 	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_HRES,&iHiRes); 
 	        GetCtrlVal(pH_InsulationTest,PANEL_13_NUMERIC_LRES,&iLiRes); 
@@ -194,9 +274,9 @@ int CVICALLBACK PANEL_13_Stop_Test (int panel, int control, int event,
 			giCurrentInsulationChan =1;
 			irstep=1;
 			
-			SetCtrlAttribute(pH_InsulationTest, PANEL_13_cButtonPrint_3,ATTR_LABEL_TEXT,"测试完毕,可重新启动"); 
+			SetCtrlAttribute(pH_InsulationTest, /*PANEL_13_cButtonPrint_3*/PANEL_13_NUMERICSLIDE,ATTR_LABEL_TEXT,"测试完毕,可重新启动"); 
 			SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_3,ATTR_ENABLED,1); 
-		    SetCtrlAttribute(pH_InsulationTest, PANEL_13_cButtonPrint_5,ATTR_LABEL_TEXT,"测试完毕,可重新启动");
+		   // SetCtrlAttribute(pH_InsulationTest, PANEL_13_cButtonPrint_5,ATTR_LABEL_TEXT,"测试完毕,可重新启动");
 			SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_5,ATTR_ENABLED,1);
 			
 			SetCtrlAttribute(pH_InsulationTest,PANEL_13_cButtonPrint_4,ATTR_ENABLED,0);
@@ -283,12 +363,12 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 				   if(giCurrentInsulationChan<38)
 				   {
 				        sprintf(sTxt,"正在测试第%d滑道间绝缘电阻",giCurrentInsulationChan);
-				        SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+				        SetCtrlAttribute (pH_InsulationTest, /*PANEL_13_cButtonPrint_3*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 						
 				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2)||(giChanResSel[giCurrentInsulationChan-1]==3)))
 				        {
 				           sprintf(sTxt,"正在测试第%d滑道间绝缘电阻",giCurrentInsulationChan);
-				           SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+				           SetCtrlAttribute (pH_InsulationTest, /*PANEL_13_cButtonPrint_3*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 						   IRSlipRelationTest(giCurrentInsulationChan,0);
 						   if((irstep>=6))
 						   {
@@ -299,7 +379,7 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 				        else
 				        {
 				           sprintf(sTxt,"第%d滑道间不需绝缘电阻",giCurrentInsulationChan);
-				           SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, sTxt); 
+				           SetCtrlAttribute (pH_InsulationTest, /*PANEL_13_cButtonPrint_3*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 					       irstep=1;
 				           giCurrentInsulationChan++;	 
 				        }
@@ -307,7 +387,7 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 				   else
 				   {
 				       giCurrentInsulationChan=1;
-				       SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
+				       SetCtrlAttribute (pH_InsulationTest, /*PANEL_13_cButtonPrint_3*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
 			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_INTERVAL, 1.0);
 			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 0); //disable timer	
 					   
@@ -321,7 +401,7 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 				        if( ((giChanResSel[giCurrentInsulationChan-1]==1) || (giChanResSel[giCurrentInsulationChan-1]==2)) )
 				        {
 				          sprintf(sTxt,"正在测试第%d滑道对地绝缘电阻",giCurrentInsulationChan);
-				          SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+				          SetCtrlAttribute (pH_InsulationTest, /*PANEL_13_cButtonPrint_5*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 			              IRSlipRelationTest(giCurrentInsulationChan,1);
 						  if(irstep>=6)									 
 						  {
@@ -332,14 +412,14 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 						else if(giChanResSel[giCurrentInsulationChan-1]==3)
 						{
 				          sprintf(sTxt,"第%d滑道对地,无须测试绝缘电阻",giCurrentInsulationChan);
-				          SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+				          SetCtrlAttribute (pH_InsulationTest, /*PANEL_13_cButtonPrint_5*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 					      irstep=1;
 				          giCurrentInsulationChan++;	 
 						}
 				        else
 				        {
 				          sprintf(sTxt,"第%d滑道无须测试对地绝缘电阻",giCurrentInsulationChan);
-				          SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_5, ATTR_LABEL_TEXT, sTxt); 
+				          SetCtrlAttribute (pH_InsulationTest, /*PANEL_13_cButtonPrint_5*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, sTxt); 
 						  
 					        irstep=1;
 				            giCurrentInsulationChan++;	 
@@ -348,7 +428,7 @@ int CVICALLBACK PANEL_13_Insulation_Test1 (int panel, int control, int event,
 				   else
 				   {
 				       giCurrentInsulationChan=1;
-				       SetCtrlAttribute (pH_InsulationTest, PANEL_13_cButtonPrint_3, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
+				       SetCtrlAttribute (pH_InsulationTest,/* PANEL_13_cButtonPrint_3*/PANEL_13_NUMERICSLIDE, ATTR_LABEL_TEXT, "滑道间耐压测试完毕，可重新启动");
 			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_INTERVAL, 1.0);
 			           SetCtrlAttribute (pH_InsulationTest, PANEL_13_TIMER, ATTR_ENABLED, 0); //disable timer						   
 				   }
@@ -478,12 +558,18 @@ int CVICALLBACK PANEL_13_Progrocess (int panel, int control, int event,
 int IRSlipRelationTest(int Channel,int flag)   
 {
    int i;
+   double fProgress;   
    char strTmp[20];
+   
    switch(irstep)
 	{
 		case 1:
 			{
+		      SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_YELLOW); 
 			  OpenRelay();
+			  fProgress=0;
+			  SetCtrlVal(pH_InsulationTest, PANEL_13_NUMERICSLIDE,fProgress);
+			  
 			  SetInstruct("AIN:","FUNC ","MANU","");    //Switch to MANU Mode
 			  SetInstruct("MANU:","EDIT:","MODE ","IR"); //Switch to MANU IR Mode 
 			  sprintf(strTmp,"%g",fHiVolt); 
@@ -513,6 +599,12 @@ int IRSlipRelationTest(int Channel,int flag)
 			}
 		case 4:
 			{
+			 
+			    GetCtrlVal(pH_InsulationTest, PANEL_13_NUMERICSLIDE, &fProgress);
+			   // GetCtrlVal(pH_InsulationTest, PANEL_13_NUMERIC_TIME1_2, &fTestTime2);   //每个滑道测试时间     
+			    SetCtrlVal(pH_InsulationTest, PANEL_13_NUMERICSLIDE, ((fProgress+1.0/fTestTime)>1)?1:(fProgress+1.0/fTestTime) ); 
+		
+			  	
 			  QueryInstruct("FUNC:","TEST");
 			  i=FindPattern(gComBufR,0,-1,"OFF",0,0);
 			  if(i>0)
@@ -545,22 +637,24 @@ int IRSlipRelationTest(int Channel,int flag)
 			  if(i>0)
 			  {  
 					
-				 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, CurPoint, ATTR_CTRL_VAL, "N");
+				 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, "N");
+				 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_RED);  
 			  }
 			  else 
 			  {
-			     SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, CurPoint, ATTR_CTRL_VAL, "Y"); 
+			     SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, "Y"); 
+				 SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_3, MakePoint(Channel,1), ATTR_CMD_BUTTON_COLOR, VAL_GREEN);  
 			  }
 			  
 			  if(Channel>20)
 			  {
 				CurPoint.x= Channel-20;
-				SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, CurPoint, ATTR_CTRL_VAL, strTmp); 
+				SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_6, CurPoint, ATTR_CTRL_VAL, strTmp); 
 			  }
 			  else
 			  {
 				CurPoint.x= Channel;
-				SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_4, CurPoint, ATTR_CTRL_VAL, strTmp); 
+				SetTableCellAttribute (pH_InsulationTest, PANEL_13_TABLE_5, CurPoint, ATTR_CTRL_VAL, strTmp); 
 				
 			  }
 			  irstep=6;  
